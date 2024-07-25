@@ -21,7 +21,7 @@
 
 | **김도윤(INFP)** | **김호현(ESFP)** | **김창권(ISFJ)** | **유종철(ISFJ)** |
 | :------: |  :------: | :------: | :------: |
-| [<img src="https://avatars.githubusercontent.com/u/57212041?v=4" height=150 width=150> <br/> @dedel009](https://github.com/dedel009/) | [<img src="https://avatars.githubusercontent.com/u/112460466?v=4" height=150 width=150> <br/> @Cheorizzang](https://github.com/Cheorizzang) | [<img src="https://avatars.githubusercontent.com/u/112460506?v=4" height=150 width=150> <br/> @heejiyang](https://github.com/heejiyang) | [<img src="https://avatars.githubusercontent.com/u/76766459?v=4" height=150 width=150> <br/> @journey-ji](https://github.com/journey-ji) |
+| [<img src="https://avatars.githubusercontent.com/u/57212041?v=4" height=150 width=150> <br/> @dedel009](https://github.com/dedel009/) | [<img src="" height=150 width=150> <br/> @Cheorizzang]() | [<img src="" height=150 width=150> <br/> @heejiyang]() | [<img src="" height=150 width=150> <br/> @journey-ji]() |
 
 </div>
 
