@@ -30,14 +30,17 @@ ALLOWED_HOSTS = []
 
 # Application definition
 CUSTOM_APPS = [
+    # 사용자가 추가한 애플리케이션
 
 ]
 
 ADDED_LIBRARY_APPS = [
+    # 사용자가 추가한 라이브러리
 
 ]
 
 DJANGO_APPS = [
+    # 기존 장고 라이브러리
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
