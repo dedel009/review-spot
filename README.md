@@ -1,6 +1,6 @@
 # ✏️ 리뷰 서비스앱 Review Spot
 
-![readme_mockup2](https://files.oaiusercontent.com/file-5SFFzE3CKnHvUaB8b3Se7yNx?se=2024-07-25T07%3A52%3A45Z&sp=r&sv=2023-11-03&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3Dd118c958-3c9b-4352-a788-6be215cef787.webp&sig=3S2Rrf0u2C15IO3E1JS9KX9o/uL7oUDpApfLHcDse58%3D)
+![readme_mockup2](https://github.com/dedel009/review-spot/blob/master/title_image.jpg?raw=true)
 
 - 배포 URL : 
 - Test ID : 
