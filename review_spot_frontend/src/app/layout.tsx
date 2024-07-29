@@ -15,8 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ko">
+      <body className={inter.className}>
+        <div className="min-h-screen flex flex-col items-center justify-center">
+          <div className="w-full h-full md:max-w-[1728px] md:max-h-[1152px] md:aspect-[3/2] bg-white">
+            <header>{/* nav */}</header>
+            {children}
+          </div>
+        </div>
+      </body>
     </html>
   );
 }
