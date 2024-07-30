@@ -15,8 +15,41 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+# swagger 설정
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+# swagger 설정
+schema_view = get_schema_view(
+    openapi.Info(
+        # API 제목
+        title='Review Spot Backend API',
+        # API 기본 버전
+        default_version='v1',
+        # API에 대한 상세 설명
+        description='리뷰스팟 백엔드 관련 API 문서',
+        # API 사용에 대한 서비스 약관 URL
+        terms_of_service='https://www.google.com/policies/terms/',
+        # API 제공자와 연락할 수 있는 정보
+        contact=openapi.Contact(email="dedel009@ronfic.com"),
+        # API 라이선스 정보 제공
+        license=openapi.License(name="Review Spot License")
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),    # 관리자 페이지 URL
+
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),  # Django REST Framework의 기본 API 뷰를 설정
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    # 사용자가 추가한 앱 url
+    path('/', include('rest_framework.urls')),
+    path('product/', include('product.urls')),
+
 ]
