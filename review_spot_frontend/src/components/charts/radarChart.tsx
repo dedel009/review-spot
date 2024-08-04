@@ -24,7 +24,9 @@ export default function RadarChart({ data }: WhiskyRadarChartProps) {
   const options = {
     responsive: true,
     scale: {
-      ticks: { beginAtZero: true, max: 50 }, // 스케일 시작 및 최대값 설정
+      ticks: { beginAtZero: true, max: 50 }, // 스케일 시작값 0, 최대값 100으로 설정
+      min: 0, // 최소값을 0으로 설정
+      max: 100, // 최대값을 100으로 설정
     },
     plugins: {
       legend: {
