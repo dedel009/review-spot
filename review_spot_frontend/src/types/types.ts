@@ -55,4 +55,10 @@ export interface WhiskyRadarChartProps {
   data: RadarChartData;
 }
 
-// 리뷰 상세 페이지 프롭스
+// 페이지네이션 컴포넌트 프롭스
+export interface PaginationProps {
+  itemsPerPage: number;
+  totalItems: number;
+  paginate: (pageNumber: number) => void;
+  currentPage: number;
+}
