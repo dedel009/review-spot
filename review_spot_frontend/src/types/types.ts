@@ -28,6 +28,17 @@ export interface ReviewItem {
   aromaProfile: AromaProfile;
 }
 
+// 리뷰 폼 데이터 타입
+export interface ReviewFormData {
+  productId: number;
+  nickname: string;
+  noseScore: number;
+  palateScore: number;
+  finishScore: number;
+  content: string;
+  aromaProfile: AromaProfile;
+}
+
 // 리뷰 아이템 컴포넌트 프롭스
 export interface ReviewsItemComponentProps {
   item: ReviewItem;
