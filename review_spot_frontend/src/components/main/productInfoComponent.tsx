@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const productInfo = [
   {
@@ -121,6 +122,14 @@ export default function ProductInfo() {
           {/* <div className="w-2/5 h-full bg-sky-500">test</div> */}
         </div>
       ))}
+      <div className="w-full mt-3 text-end">
+        <Link
+          href={"/"}
+          className="p-3 text-black border border-sky-500 hover:text-white hover:bg-sky-500 rounded"
+        >
+          목록가기
+        </Link>
+      </div>
     </div>
   );
 }
