@@ -1,4 +1,4 @@
-import ProductList from "./productListComponent";
+import ProductList from "../products/productListComponent";
 
 export default function BannerComponent() {
   return (

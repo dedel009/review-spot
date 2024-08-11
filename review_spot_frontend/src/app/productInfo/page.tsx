@@ -1,4 +1,4 @@
-import ProductInfo from "@/components/main/productInfoComponent";
+import ProductInfo from "@/components/products/productInfoComponent";
 
 export default function Page() {
   return (

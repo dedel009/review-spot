@@ -109,7 +109,7 @@ export default function ProductList() {
     <div className="w-full flex flex-col">
       <div className="grid grid-cols-3 w-full gap-5 p-5">
         {currentItems.map((product) => (
-          <Link href={"/productInfo"}>
+          <Link href={"/productInfo"} key={product.id}>
             <div
               key={product.id}
               className="h-full flex flex-row items-center border border-sky-500 rounded-lg overflow-hidden ease duration-300 hover:-translate-y-2 w-full"
