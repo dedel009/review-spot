@@ -8,6 +8,20 @@ export interface Product {
   category: string;
 }
 
+// 상품 상세 정보 타입
+export interface ProductInfo {
+  productName: string;
+  imgPath: string;
+  alcohol: number;
+  capacity: number;
+  area: string;
+  category: string;
+  distillery: string // 증류소
+  bottler: string // 병입업자
+  bottlingSerie: string // 병입 시리즈
+  bottled: string // 병입년도
+  caskType: string // 오크통 유형
+}
 // 아로마 프로필 타입
 export interface AromaProfile {
   labels: string[];
