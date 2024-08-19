@@ -21,4 +21,6 @@ class ProductList(APIView):
         if product_qs.exists():
             print("제품 목록 조회 성공")
             return Response(ProductSerializer(product_qs, many=True).data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "제품 목록이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
