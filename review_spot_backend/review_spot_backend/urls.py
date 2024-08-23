@@ -50,6 +50,6 @@ urlpatterns = [
 
     # 사용자가 추가한 앱 url
     path('/', include('rest_framework.urls')),
-    path('product/', include('product.urls')),
+    path('api/products/', include('product.urls')),
 
 ]
