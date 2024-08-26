@@ -31,13 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 CUSTOM_APPS = [
     # 사용자가 추가한 애플리케이션
-    'product'
+    'product',
+    'category',
+    'review',
 ]
 
 ADDED_LIBRARY_APPS = [
     # 사용자가 추가한 라이브러리
     'rest_framework',
-    'drf_yasg'
+    'drf_yasg',
 ]
 
 DJANGO_APPS = [
@@ -89,10 +91,10 @@ WSGI_APPLICATION = 'review_spot_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'review_spot',
-        'USER': 'postgres',
-        'PASSWORD': '0000',
-        'HOST': 'localhost',
+        'NAME': 'review_spot_main',
+        'USER': 'developer',
+        'PASSWORD': 'review2024',
+        'HOST': '35.232.134.75',
         'PORT': '5432',
     }
 
