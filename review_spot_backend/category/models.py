@@ -16,4 +16,3 @@ class Category(models.Model):
         verbose_name='수정일시',
         auto_now=True,
     )
-
