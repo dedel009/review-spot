@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from review.models import Review
 
 
 # 리뷰 요청 시리얼라이저
@@ -7,10 +8,10 @@ class ReviewRequestSerializer(serializers.Serializer):
         help_text='검색어',
         default="",
     )
-    display = serializers.IntegerField(
-        help_text='한번에 표시할 검색 결과 개수',
-        default=20
-    )
+    # display = serializers.IntegerField(
+    #     help_text='한번에 표시할 검색 결과 개수',
+    #     default=20
+    # )
     category = serializers.CharField(
         help_text='리뷰 목록의 카테고리',
         default=''
@@ -19,37 +20,60 @@ class ReviewRequestSerializer(serializers.Serializer):
         help_text='검색 결과 정렬 방법',
         default='created'
     )
-    pageNum = serializers.IntegerField(
-        help_text='페이지 번호',
-        default=0
-    )
+    # pageNum = serializers.IntegerField(
+    #     help_text='페이지 번호',
+    #     default=0
+    # )
 
 
 # 리뷰 응답 시리얼라이저
-class ReivewResponseSerializer(serializers.Serializer):
-    nickname = serializers.CharField(
-        help_text='유저 닉네임',
-        required=True,
-    )
+class ReivewResponseSerializer(serializers.ModelSerializer):
 
-    nose_score = serializers.IntegerField(
-        help_text='냄새 점수'
-    )
+    def get_review_id(self, instance: Review):
+        return instance.pk
 
-    palate_score = serializers.IntegerField(
-        help_text='향 점수'
-    )
+    # 리뷰 작성자 별명
+    # def get_nickname(self, instance: Review):
+    #     return instance.nickname
 
-    finish_score = serializers.IntegerField(
-        help_text='목넘김 점수'
-    )
+    def get_avg_score(self, instance: Review):
+        return instance.review_score_info.get('avg_score', 0)
 
-    content = serializers.CharField(
-        help_text='리뷰 내용'
-    )
+    def get_nose_score(self, instance: Review):
+        return instance.review_score_info.get('nose_score', 0)
 
-    aroma_profile = serializers.JSONField(
-        help_text='그래프 관련 정보',
-        default=dict(),
-    )
+    def get_palate_score(self, instance: Review):
+        return instance.review_score_info.get('palate_score', 0)
+
+    def get_finish_score(self, instance: Review):
+        return instance.review_score_info.get('finish_score', 0)
+
+    # def get_content(self, instance: Review):
+    #     return instance.content
+    #
+    # def get_aroma_profile(self, instance: Review):
+    #     return instance.aroma_profile
+
+    review_id = serializers.SerializerMethodField()
+    # nickname = serializers.SerializerMethodField()
+    avg_score = serializers.SerializerMethodField()
+    nose_score = serializers.SerializerMethodField()
+    palate_score = serializers.SerializerMethodField()
+    finish_score = serializers.SerializerMethodField()
+    # content = serializers.SerializerMethodField()
+    # aroma_profile = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Review
+        fields = [
+            'review_id',
+            'nickname',
+            'avg_score',
+            'nose_score',
+            'palate_score',
+            'finish_score',
+            'content',
+            'aroma_profile',
+            'product',
+        ]
 

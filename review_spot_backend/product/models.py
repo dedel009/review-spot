@@ -15,6 +15,7 @@ class Product(models.Model):
         null=True,
     )
 
+    # 양주는 도수, 용량, 생산지가 들어감
     product_info = models.JSONField(
         verbose_name='제품 정보 관련 데이터',
         default=dict,

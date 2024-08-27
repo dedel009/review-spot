@@ -41,8 +41,3 @@ class Review(models.Model):
         'product.Product',
         on_delete=models.PROTECT,
     )
-
-    category = models.ForeignKey(
-        'category.Category',
-        on_delete=models.PROTECT,
-    )

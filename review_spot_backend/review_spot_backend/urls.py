@@ -52,6 +52,6 @@ urlpatterns = [
     # 제품 url
     path('api/product/', include('product.urls')),
     # 리뷰 url
-    path('api/reviews/', include('review.urls')),
+    path('api/reviews', include('review.urls')),
 
 ]

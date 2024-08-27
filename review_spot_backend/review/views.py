@@ -1,5 +1,7 @@
 from django.db.models import Q
+from django.forms import model_to_dict
 from django.shortcuts import render
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
@@ -22,14 +24,19 @@ class CustomPagination(PageNumberPagination):
 
 # 리뷰 작성 및 조회 API
 class ReviewAPIView(APIView):
-    pagination_class = CustomPagination
 
+    @swagger_auto_schema(
+        query_serializer=ReviewRequestSerializer,
+        responses={200: ReivewResponseSerializer(many=True)},
+        operation_description="리뷰 조회 API",
+    )
     # 리뷰 조회 API
-    def get(self, reqeust: Request, *args, **kwargs):
+    def get(self, reqeust, *args, **kwargs):
 
         # 요청 시리얼라이저로 쿼리 파라미터를 검증
         request_serializer = ReviewRequestSerializer(data=reqeust.query_params)
         request_serializer.is_valid(raise_exception=True)
+        print("request_serializer :::", request_serializer.data)
 
         # 검증된 데이터로 쿼리셋 필터링
         # 검색어
@@ -51,7 +58,7 @@ class ReviewAPIView(APIView):
         # 카테고리 필터
         if category_params:
             review_queryset = review_queryset.filter(
-                Q(category__name__iexact=category_params)
+                Q(product__category__name__iexact=category_params)
             )
 
         # 정렬 처리
@@ -61,10 +68,12 @@ class ReviewAPIView(APIView):
             review_queryset = review_queryset.order_by('-id')
 
         # 페이지네이션 처리
-        paginator = self.pagination_class()
+        paginator = CustomPagination()
         paginated_review_queryset = paginator.paginate_queryset(review_queryset, reqeust)
 
-        print("paginated_review_queryset :::", paginated_review_queryset)
+        for review in paginated_review_queryset:
+            review_dict = model_to_dict(review)
+            print(review_dict)
 
         # 응답 시리얼라이저로 데이터 직렬화
         reponse_review_serializer = ReivewResponseSerializer(paginated_review_queryset, many=True)
