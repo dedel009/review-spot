@@ -33,7 +33,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/dev/ronfic_integrated_backend",
+    "last_opened_file_path": "D:/dev/review-spot",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -61,6 +61,7 @@
       <updated>1722659178396</updated>
       <workItem from="1722659179808" duration="6114000" />
       <workItem from="1724243611827" duration="69000" />
+      <workItem from="1725091545258" duration="366000" />
     </task>
     <servers />
   </component>
