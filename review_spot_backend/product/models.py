@@ -11,3 +11,4 @@ class Product(models.Model):
     description = models.CharField(
         help_text='제품 설명',
     )
+

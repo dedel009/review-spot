@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'review_spot_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testdb',
+        'NAME': 'review_spot',
         'USER': 'postgres',
         'PASSWORD': '0000',
         'HOST': 'localhost',
