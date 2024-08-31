@@ -17,7 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/review_spot_backend" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/review_spot_backend/venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (review-spot)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
