@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from product.serializers import ProductSerializer
 from review.models import Review
 
 
@@ -48,6 +50,9 @@ class ReivewResponseSerializer(serializers.ModelSerializer):
     def get_finish_score(self, instance: Review):
         return instance.review_score_info.get('finish_score', 0)
 
+    def get_product(self, instance: Review):
+        return ProductSerializer(instance=instance.product).data
+
     # def get_content(self, instance: Review):
     #     return instance.content
     #
@@ -62,6 +67,7 @@ class ReivewResponseSerializer(serializers.ModelSerializer):
     finish_score = serializers.SerializerMethodField()
     # content = serializers.SerializerMethodField()
     # aroma_profile = serializers.SerializerMethodField()
+    product = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
