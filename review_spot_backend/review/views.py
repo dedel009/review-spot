@@ -1,24 +1,26 @@
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from review.serializer import ReviewRequestSerializer, ReivewResponseSerializer
+from common.serializer import CommonRequestSerializer
+from review.serializer import ReivewListResponseSerializer
 
 
-# 리뷰 작성 및 조회 API
+# 리뷰 작성 및 리스트 조회 API
 class ReviewAPIView(APIView):
 
     @swagger_auto_schema(
-        query_serializer=ReviewRequestSerializer,
-        responses={200: ReivewResponseSerializer(many=True)},
-        operation_description="리뷰 조회 API",
+        query_serializer=CommonRequestSerializer,
+        responses={200: ReivewListResponseSerializer(many=True)},
+        operation_description="리뷰 리스트 조회 API",
     )
-    # 리뷰 조회 API
-    def get(self, reqeust, *args, **kwargs):
+    # 리뷰 리스트 조회 API
+    def get(self, reqeust: Request, *args, **kwargs):
 
         # 요청 시리얼라이저로 쿼리 파라미터를 검증
-        request_serializer = ReviewRequestSerializer(data=reqeust.query_params)
+        request_serializer = CommonRequestSerializer(data=reqeust.query_params)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
@@ -59,11 +61,11 @@ class ReviewAPIView(APIView):
         print("paginated_review_list :::", paginated_review_list)
 
         if len(paginated_review_list) == 0:
-            error_message = '조회된 리뷰가 없습니다.'
+            error_message = '조회된 리뷰 목록이 없습니다.'
             return paginator.get_paginated_response(status=status.HTTP_400_BAD_REQUEST, data=error_message)
 
         # 응답 시리얼라이저로 데이터 직렬화
-        reponse_review_serializer = ReivewResponseSerializer(paginated_review_list, many=True)
+        response_review_list_serializer = ReivewListResponseSerializer(paginated_review_list, many=True)
 
-        return paginator.get_paginated_response(status=status.HTTP_200_OK, data=reponse_review_serializer.data)
+        return paginator.get_paginated_response(status=status.HTTP_200_OK, data=response_review_list_serializer.data)
 

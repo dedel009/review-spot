@@ -1,35 +1,11 @@
 from rest_framework import serializers
 
-from product.serializers import ProductSerializer
+from product.serializers import ProductAllSerializer
 from review.models import Review
 
 
-# 리뷰 요청 시리얼라이저
-class ReviewRequestSerializer(serializers.Serializer):
-    query = serializers.CharField(
-        help_text='검색어',
-        default="",
-    )
-    # display = serializers.IntegerField(
-    #     help_text='한번에 표시할 검색 결과 개수',
-    #     default=20
-    # )
-    category = serializers.CharField(
-        help_text='리뷰 목록의 카테고리',
-        default=''
-    )
-    sort = serializers.CharField(
-        help_text='검색 결과 정렬 방법',
-        default='created'
-    )
-    # pageNum = serializers.IntegerField(
-    #     help_text='페이지 번호',
-    #     default=0
-    # )
-
-
 # 리뷰 응답 시리얼라이저
-class ReivewResponseSerializer(serializers.ModelSerializer):
+class ReivewListResponseSerializer(serializers.ModelSerializer):
 
     def get_review_id(self, instance: Review):
         return instance.pk
@@ -51,7 +27,7 @@ class ReivewResponseSerializer(serializers.ModelSerializer):
         return instance.review_score_info.get('finish_score', 0)
 
     def get_product(self, instance: Review):
-        return ProductSerializer(instance=instance.product).data
+        return ProductAllSerializer(instance=instance.product).data
 
     # def get_content(self, instance: Review):
     #     return instance.content
