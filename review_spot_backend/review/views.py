@@ -1,25 +1,9 @@
 from django.db.models import Q
-from django.forms import model_to_dict
-from django.shortcuts import render
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from review.serializer import ReviewRequestSerializer, ReivewResponseSerializer
-
-
-class CustomPagination(PageNumberPagination):
-    # 페이지 번호
-    page_query_param = 'pageNum'
-    # 페이지 크기
-    page_size_query_param = 'display'
-    # 기본 페이지 크기
-    page_size = 20
-    # 최대 페이지 크기
-    # max_page_size = 100
 
 
 # 리뷰 작성 및 조회 API
@@ -68,14 +52,18 @@ class ReviewAPIView(APIView):
             review_queryset = review_queryset.order_by('-id')
 
         # 페이지네이션 처리
+        from common.utils import CustomPagination
         paginator = CustomPagination()
-        paginated_review_queryset = paginator.paginate_queryset(review_queryset, reqeust)
+        paginated_review_list = paginator.paginate_queryset(review_queryset, reqeust)
 
-        for review in paginated_review_queryset:
-            review_dict = model_to_dict(review)
-            print(review_dict)
+        print("paginated_review_list :::", paginated_review_list)
+
+        if len(paginated_review_list) == 0:
+            error_message = '조회된 리뷰가 없습니다.'
+            return paginator.get_paginated_response(status=status.HTTP_400_BAD_REQUEST, data=error_message)
 
         # 응답 시리얼라이저로 데이터 직렬화
-        reponse_review_serializer = ReivewResponseSerializer(paginated_review_queryset, many=True)
-        return paginator.get_paginated_response(reponse_review_serializer.data)
+        reponse_review_serializer = ReivewResponseSerializer(paginated_review_list, many=True)
+
+        return paginator.get_paginated_response(status=status.HTTP_200_OK, data=reponse_review_serializer.data)
 
