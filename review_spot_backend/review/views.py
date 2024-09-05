@@ -68,15 +68,15 @@ class ReviewAPIView(APIView):
 
         return paginator.get_paginated_response(status=status.HTTP_200_OK, data=response_review_list_serializer.data)
 
-    @swagger_auto_schema(
-        request_body='',
-        responses={200: ReivewListResponseSerializer(many=True)},
-        operation_description="리뷰 작성 API",
-    )
-    def post(self, reqeust: Request, *args, **kwargs):
-        request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
-        request_serializer.is_valid(raise_exception=True)
-        print("request_serializer :::", request_serializer.data)
+    # @swagger_auto_schema(
+    #     request_body='',
+    #     responses={200: ReivewListResponseSerializer(many=True)},
+    #     operation_description="리뷰 작성 API",
+    # )
+    # def post(self, reqeust: Request, *args, **kwargs):
+    #     request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
+    #     request_serializer.is_valid(raise_exception=True)
+    #     print("request_serializer :::", request_serializer.data)
 
 
 
