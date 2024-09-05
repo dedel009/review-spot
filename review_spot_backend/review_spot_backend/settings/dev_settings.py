@@ -153,3 +153,9 @@ CORS_ALLOWED_ORIGINS = [
     '127.0.0.1',
     'localhost',
 ]
+
+# http이기 때문에
+# CORS 헤더를 비활성화
+# 추후 ssl을 nginx에 설치 후 https 요청으로
+# 변경하면 제거하기
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
