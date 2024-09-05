@@ -34,6 +34,7 @@ CUSTOM_APPS = [
     'product',
     'category',
     'review',
+    'common',
 ]
 
 ADDED_LIBRARY_APPS = [

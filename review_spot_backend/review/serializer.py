@@ -58,3 +58,40 @@ class ReivewListResponseSerializer(serializers.ModelSerializer):
             'product',
         ]
 
+
+# 리뷰 작성 요청 시리얼라이저
+class CreateReviewRequestSerializer(serializers.ModelSerializer):
+
+    product_id = serializers.IntegerField(
+        help_text='상품 ID'
+    )
+    nickname = serializers.CharField(
+        help_text='리뷰 작성자 닉네임'
+    )
+    nose_score = serializers.IntegerField(
+        help_text='향 점수'
+    )
+    palate_score = serializers.IntegerField(
+        help_text='맛 점수'
+    )
+    finish_score = serializers.IntegerField(
+        help_text='피니쉬 점수'
+    )
+    content = serializers.CharField(
+        help_text='리뷰 내용'
+    )
+    aroma_profile = serializers.JSONField(
+        help_text='방사형 차트에 쓰이는 데이터'
+    )
+
+    class Meata:
+        model = Review
+        fields = [
+            'product_id',
+            'nickname',
+            'nose_score',
+            'palate_score',
+            'finish_score',
+            'content',
+            'aroma_profile'
+        ]

@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 
 from common.serializer import CommonRequestSerializer
-from review.serializer import ReivewListResponseSerializer
+from review.serializer import ReivewListResponseSerializer, CreateReviewRequestSerializer
 
 
 # 리뷰 작성 및 리스트 조회 API
@@ -16,7 +16,6 @@ class ReviewAPIView(APIView):
         responses={200: ReivewListResponseSerializer(many=True)},
         operation_description="리뷰 리스트 조회 API",
     )
-    # 리뷰 리스트 조회 API
     def get(self, reqeust: Request, *args, **kwargs):
 
         # 요청 시리얼라이저로 쿼리 파라미터를 검증
@@ -68,4 +67,16 @@ class ReviewAPIView(APIView):
         response_review_list_serializer = ReivewListResponseSerializer(paginated_review_list, many=True)
 
         return paginator.get_paginated_response(status=status.HTTP_200_OK, data=response_review_list_serializer.data)
+
+    @swagger_auto_schema(
+        request_body='',
+        responses={200: ReivewListResponseSerializer(many=True)},
+        operation_description="리뷰 작성 API",
+    )
+    def post(self, reqeust: Request, *args, **kwargs):
+        request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
+        request_serializer.is_valid(raise_exception=True)
+        print("request_serializer :::", request_serializer.data)
+
+
 
