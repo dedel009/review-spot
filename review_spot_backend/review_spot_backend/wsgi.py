@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'review_spot_backend.product_settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'review_spot_backend.settings.product_settings')
 
 application = get_wsgi_application()
