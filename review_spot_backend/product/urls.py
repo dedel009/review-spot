@@ -3,5 +3,5 @@ from django.urls import path, include
 from product import views
 
 urlpatterns = [
-    path('', views.ProductList.as_view())
+    path('', views.ProductList.as_view(), name='product-list')
 ]
