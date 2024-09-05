@@ -45,6 +45,8 @@ ADDED_LIBRARY_APPS = [
     # 사용자가 추가한 라이브러리
     'rest_framework',
     'drf_yasg',
+    # cors 관련
+    'corsheaders',
 ]
 
 DJANGO_APPS = [
@@ -59,6 +61,7 @@ DJANGO_APPS = [
 INSTALLED_APPS = CUSTOM_APPS + ADDED_LIBRARY_APPS + DJANGO_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 가장 위에 추가
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -145,3 +148,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS 설정
+CORS_ALLOWED_ORIGINS = [
+    '34.123.47.125',
+    '127.0.0.1',
+    'localhost',
+]
