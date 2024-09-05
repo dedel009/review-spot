@@ -2,6 +2,7 @@ from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonRequestSerializer
@@ -68,15 +69,37 @@ class ReviewAPIView(APIView):
 
         return paginator.get_paginated_response(status=status.HTTP_200_OK, data=response_review_list_serializer.data)
 
-    # @swagger_auto_schema(
-    #     request_body='',
-    #     responses={200: ReivewListResponseSerializer(many=True)},
-    #     operation_description="리뷰 작성 API",
-    # )
-    # def post(self, reqeust: Request, *args, **kwargs):
-    #     request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
-    #     request_serializer.is_valid(raise_exception=True)
-    #     print("request_serializer :::", request_serializer.data)
+    @swagger_auto_schema(
+        request_body=CreateReviewRequestSerializer,
+        responses={200: '성공'},
+        operation_description="리뷰 작성 API",
+    )
+    def post(self, reqeust: Request, *args, **kwargs):
+        request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
+        request_serializer.is_valid(raise_exception=True)
+        print("request_serializer :::", request_serializer.data)
 
+        # 생성 파라미터
+        create_params = {
+            'product_id': request_serializer.validated_data.get('product_id', 0),
+            'nickname': request_serializer.validated_data.get('nickname', ''),
+            'content': request_serializer.validated_data.get('content', ''),
+            'review_score_info': {
+                'nose_score': request_serializer.validated_data.get('nose_score', 0),
+                'palate_score': request_serializer.validated_data.get('palate_score', 0),
+                'finish_score': request_serializer.validated_data.get('finish_score', 0),
+            },
+            'aroma_profile': request_serializer.validated_data.get('aroma_profile', dict),
+        }
+
+        # 리뷰 데이터 생성
+        from review.models import Review
+        Review.objects.create(**create_params)
+
+        return Response({
+            'success': True,
+            'message': '성공',
+            'data': None,
+        })
 
 
