@@ -14,7 +14,13 @@ class ReivewListResponseSerializer(serializers.ModelSerializer):
     #     return instance.nickname
 
     def get_avg_score(self, instance: Review):
-        return instance.review_score_info.get('avg_score', 0)
+        total_score = 0
+        total_score += instance.review_score_info.get('nose_score', 0)
+        total_score += instance.review_score_info.get('palate_score', 0)
+        total_score += instance.review_score_info.get('finish_score', 0)
+
+        avg_score = total_score / len(instance.review_score_info)
+        return avg_score
 
     def get_nose_score(self, instance: Review):
         return instance.review_score_info.get('nose_score', 0)
@@ -84,7 +90,7 @@ class CreateReviewRequestSerializer(serializers.ModelSerializer):
         help_text='방사형 차트에 쓰이는 데이터'
     )
 
-    class Meata:
+    class Meta:
         model = Review
         fields = [
             'product_id',
