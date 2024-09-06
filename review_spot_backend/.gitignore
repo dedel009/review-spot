@@ -404,5 +404,3 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,python,django,windows
 .python-version
-
-static/*
