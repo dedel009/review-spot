@@ -1,11 +1,17 @@
 // 상품 타입
 export interface Product {
-  name: string;
-  imgPath: string;
+  product_id: number;
+  product_name: string;
+  img_path: string;
   alcohol: number;
   capacity: number;
   area: string;
-  category: string;
+  category: {
+    id: number;
+    name: string;
+    created: string;
+    updated: string;
+  }
 }
 
 // 상품 상세 정보 타입

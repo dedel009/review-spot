@@ -97,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'review_spot_main',
         'USER': 'developer',
-        'PASSWORD': 'review2024',
+        'PASSWORD': 'reviewspot',
         'HOST': '35.232.134.75',
         'PORT': '5432',
     }
@@ -133,7 +133,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ= False
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

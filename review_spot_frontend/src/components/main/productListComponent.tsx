@@ -1,4 +1,6 @@
+import { Product } from "@/types/types";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 const products = [
   {
     id: 1,
@@ -33,11 +35,20 @@ const products = [
     imageUrl: "/evanWilliams.jpg",
   },
 ];
+const [items, setItems] = useState<Product | undefined>(undefined);
+
+useEffect(() => {
+  fetch("http://34.123.47.125/api/products?sort=created")
+    .then((res) => res.json())
+    .then((data) => setItems(data));
+
+  console.log("item", items);
+}, []);
 
 const ProductList = () => {
   return (
     <div className="grid grid-cols-3 w-full gap-5 p-5">
-      {products.map((product) => (
+      {products!.map((product) => (
         <div
           key={product.id}
           className="flex flex-row items-center border border-sky-500 rounded-lg overflow-hidden ease duration-300 hover:-translate-y-2 w-full"
