@@ -24,3 +24,23 @@ class CustomPagination(PageNumberPagination):
         })
 
 
+# 응답 반환 메소드
+def CustomResponse(code='CODE_0000', data=None):
+
+    return_message = GetCustomCode(code)
+
+    return Response({
+        'success': True,
+        'message': return_message,
+        'data': data,
+    })
+
+
+# 메세지 반환 메소드
+def GetCustomCode(code):
+    if code == 'CODE_0000':
+        return "성공."
+    elif code == 'CODE_0001':
+        return "존재하지 않는 대상입니다."
+
+

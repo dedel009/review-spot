@@ -39,6 +39,11 @@ class Product(models.Model):
         null=True,
     )
 
+    is_active = models.BooleanField(
+        verbose_name='사용 유무',
+        default=True,
+    )
+
     # alcohol = models.IntegerField(
     #     verbose_name='도수'
     # )
