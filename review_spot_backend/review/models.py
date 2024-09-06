@@ -41,3 +41,8 @@ class Review(models.Model):
         'product.Product',
         on_delete=models.PROTECT,
     )
+
+    is_active = models.BooleanField(
+        verbose_name='사용 유무',
+        default=True,
+    )

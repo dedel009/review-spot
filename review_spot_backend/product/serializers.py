@@ -62,3 +62,84 @@ class ProductListResponseSerializer(serializers.ModelSerializer):
             'area',
         ]
 
+
+# 상품 상세보기 응답 시리얼라이저
+class ProductDetailResponseSerializer(serializers.ModelSerializer):
+
+    def get_product_id(self, instnace: Product):
+        return instnace.pk
+
+    def get_img_path(self, instance: Product):
+        return instance.imgPath
+
+    def get_product_name(self, instance: Product):
+        return instance.name
+
+    def get_category(self, instance: Product):
+        return CategoryAllSerializer(instance=instance.category).data
+
+    def get_capacity(self, instance: Product):
+        return instance.product_info.get('capacity', 0)
+
+    def get_alcohol(self, instance: Product):
+        return instance.product_info.get('alcohol', 0)
+
+    def get_area(self, instance: Product):
+        return instance.product_info.get('area', '')
+
+    def get_distillery(self, instance: Product):
+        return instance.product_info.get('distillery', '')
+
+    def get_bottler(self, instance: Product):
+        return instance.product_info.get('bottler', '')
+
+    def get_bottling_serie(self, instance: Product):
+        return instance.product_info.get('bottling_serie', '')
+
+    def get_bottled(self, instance: Product):
+        return instance.product_info.get('bottled', '')
+
+    def get_cask_type(self, instance: Product):
+        return instance.product_info.get('cask_type', '')
+
+    # 상품 ID
+    product_id = serializers.SerializerMethodField()
+    # 상품 이미지 경로
+    img_path = serializers.SerializerMethodField()
+    # 상품 이름
+    product_name = serializers.SerializerMethodField()
+    # 상품 카테고리
+    category = serializers.SerializerMethodField()
+    # 용량
+    capacity = serializers.SerializerMethodField()
+    # 도수
+    alcohol = serializers.SerializerMethodField()
+    # 생산지
+    area = serializers.SerializerMethodField()
+    # 증류소
+    distillery = serializers.SerializerMethodField()
+    # 병입업자
+    bottler = serializers.SerializerMethodField()
+    # 병입 시리즈
+    bottling_serie = serializers.SerializerMethodField()
+    # 병입년도
+    bottled = serializers.SerializerMethodField()
+    # 오크통 유형
+    cask_type = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = [
+            'product_id',
+            'img_path',
+            'product_name',
+            'category',
+            'capacity',
+            'alcohol',
+            'area',
+            'distillery',
+            'bottler',
+            'bottling_serie',
+            'bottled',
+            'cask_type',
+        ]
