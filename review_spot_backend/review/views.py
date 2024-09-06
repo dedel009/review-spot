@@ -5,7 +5,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from common.serializer import CommonRequestSerializer
+from common.serializer import CommonListRequestSerializer
+from common.utils import ErrorResponse
 from review.serializer import ReivewListResponseSerializer, CreateReviewRequestSerializer
 
 
@@ -13,14 +14,14 @@ from review.serializer import ReivewListResponseSerializer, CreateReviewRequestS
 class ReviewAPIView(APIView):
 
     @swagger_auto_schema(
-        query_serializer=CommonRequestSerializer,
+        query_serializer=CommonListRequestSerializer,
         responses={200: ReivewListResponseSerializer(many=True)},
         operation_description="리뷰 리스트 조회 API",
     )
     def get(self, reqeust: Request, *args, **kwargs):
 
         # 요청 시리얼라이저로 쿼리 파라미터를 검증
-        request_serializer = CommonRequestSerializer(data=reqeust.query_params)
+        request_serializer = CommonListRequestSerializer(data=reqeust.query_params)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
@@ -33,7 +34,9 @@ class ReviewAPIView(APIView):
         sort = request_serializer.validated_data.get('sort', 'created')
 
         from review.models import Review
-        review_queryset = Review.objects.all()
+        review_queryset = Review.objects.filter(
+            is_active=True,
+        )
 
         # 리뷰 내용 필터
         if query_params:

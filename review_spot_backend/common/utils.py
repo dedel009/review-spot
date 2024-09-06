@@ -24,3 +24,23 @@ class CustomPagination(PageNumberPagination):
         })
 
 
+# 에러 응답 반환 메소드
+def ErrorResponse(code, data=None):
+
+    error_message = GetErrorCode(code)
+
+    return Response({
+        'success': True,
+        'message': error_message,
+        'data': data,
+    })
+
+
+# 에러 메세지 반환 메소드
+def GetErrorCode(code):
+    if code == 'CODE_0001':
+        return "존재하지 않는 대상입니다."
+    elif code == 'CODE_0002':
+        return ""
+
+

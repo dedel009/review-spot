@@ -16,3 +16,8 @@ class Category(models.Model):
         verbose_name='수정일시',
         auto_now=True,
     )
+
+    is_active = models.BooleanField(
+        verbose_name='사용 유무',
+        default=True,
+    )

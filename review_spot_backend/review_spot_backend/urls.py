@@ -50,8 +50,8 @@ urlpatterns = [
 
     # 사용자가 추가한 앱 url
     # 제품 url
-    path('api/products', include('product.urls')),
+    path('api/products/', include('product.urls')),
     # 리뷰 url
-    path('api/reviews', include('review.urls')),
+    path('api/reviews/', include('review.urls')),
 
 ]

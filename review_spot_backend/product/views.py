@@ -2,16 +2,18 @@ from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from common.serializer import CommonRequestSerializer
+from common.serializer import CommonListRequestSerializer, CommonDetailRequestSerializer
+from common.utils import ErrorResponse
 from product.serializers import ProductListResponseSerializer
 
 
-class ProductList(APIView):
+class ProductListApiView(APIView):
 
     @swagger_auto_schema(
-        query_serializer=CommonRequestSerializer,
+        query_serializer=CommonListRequestSerializer,
         responses={200: ProductListResponseSerializer(many=True)},
         operation_description="상품 리스트 조회 API",
     )
@@ -19,7 +21,7 @@ class ProductList(APIView):
     def get(self, reqeust: Request, *args, **kwargs):
 
         # 요청 시리얼라이저로 쿼리 파라미터를 검증
-        request_serializer = CommonRequestSerializer(data=reqeust.query_params)
+        request_serializer = CommonListRequestSerializer(data=reqeust.query_params)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
@@ -32,7 +34,9 @@ class ProductList(APIView):
         sort = request_serializer.validated_data.get('sort', 'created')
 
         from product.models import Product
-        product_qs = Product.objects.all()
+        product_qs = Product.objects.filter(
+            is_active=True,
+        )
 
         # 검색어로 상품명 필터링
         if query_params:
@@ -65,5 +69,37 @@ class ProductList(APIView):
         response_product_list_serializer = ProductListResponseSerializer(paginated_product_list, many=True)
 
         return paginator.get_paginated_response(status=status.HTTP_200_OK, data=response_product_list_serializer.data)
+
+
+# 상품 상세 정보 조회 API
+class ProductDetailApiView(APIView):
+
+    @swagger_auto_schema(
+        query_serializer=CommonDetailRequestSerializer,
+        responses={status.HTTP_200_OK: '성공'},
+        operation_description="상품 상세보기 조회 API",
+    )
+    def get(self, reqeust: Request, *args, **kwargs):
+
+        # 요청 시리얼라이저로 쿼리 파라미터를 검증
+        request_serializer = CommonDetailRequestSerializer(data=reqeust.query_params)
+        request_serializer.is_valid(raise_exception=True)
+        print("request_serializer :::", request_serializer.data)
+
+        product_id = request_serializer.validated_data.get('product_id')
+
+        # 해당하는 상품 쿼리셋
+        from product.models import Product
+        product_qs = Product.objects.filter(
+            id=product_id,
+            is_active=True,
+        )
+
+        # 상품 상세보기 데이터가 없을 경우 에러 반환
+        if not product_qs.exists():
+            return ErrorResponse(code="CODE_0001")
+
+
+
 
 
