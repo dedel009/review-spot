@@ -2,12 +2,11 @@ from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonListRequestSerializer, CommonDetailRequestSerializer
-from common.utils import ErrorResponse
-from product.serializers import ProductListResponseSerializer
+from common.utils import CustomResponse
+from product.serializers import ProductListResponseSerializer, ProductDetailResponseSerializer
 
 
 class ProductListApiView(APIView):
@@ -97,8 +96,9 @@ class ProductDetailApiView(APIView):
 
         # 상품 상세보기 데이터가 없을 경우 에러 반환
         if not product_qs.exists():
-            return ErrorResponse(code="CODE_0001")
+            return CustomResponse(code="CODE_0001")
 
+        return CustomResponse(data=ProductDetailResponseSerializer(instance=product_qs.first(), many=False).data)
 
 
 

@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonListRequestSerializer
-from common.utils import ErrorResponse
 from review.serializer import ReivewListResponseSerializer, CreateReviewRequestSerializer
 
 
