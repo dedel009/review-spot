@@ -6,8 +6,6 @@
   - 프론트 URL : https://review-spot.vercel.app/reviews
   - 백엔드 swagger URL : https://34.123.47.125/swagger/
   - 백엔드 admin URL : https://34.123.47.125/admin/ 
-- Test ID : admin
-- Test PW : 1234
 
 <br>
 
