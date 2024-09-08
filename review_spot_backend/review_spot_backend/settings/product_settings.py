@@ -29,6 +29,8 @@ ALLOWED_HOSTS = [
     '34.123.47.125',
     '127.0.0.1',
     'localhost',
+    'https://review-spot.vercel.app/',
+    'http://localhost:3000',
 ]
 
 
@@ -154,6 +156,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://34.123.47.125',
     'http://127.0.0.1',
     'http://localhost',
+    'https://review-spot.vercel.app/',
+    'http://localhost:3000',
 ]
 
 # http이기 때문에
