@@ -8,22 +8,27 @@ import { Product } from "@/types/types";
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch("/api/products"); // 로컬 API 경로로 요청
-        const result = await res.json();
-        setProducts(result.data); // Set fetched products
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
-    getData();
-  }, []);
-
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [sort, setSort] = useState("created");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9; // Number of items per page
+  const itemsPerPage = 9;
+
+  const fetchProducts = async () => {
+    try {
+      const query = new URLSearchParams({
+        product_name: search,
+        "category.name": category,
+        sort,
+      }).toString();
+
+      const res = await fetch(`/lib/products?${query}`);
+      const result = await res.json();
+      setProducts(result.data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    }
+  };
 
   // Pagination calculation
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -33,8 +38,43 @@ export default function ProductList() {
   // Pagination function
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  useEffect(() => {
+    fetchProducts();
+  }, [search, category, sort, currentPage]);
+
   return (
     <div className="w-full flex flex-col">
+      <div className="w-full flex justify-end gap-4 p-5">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border p-2 rounded"
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="">All Categories</option>
+          <option value="양주">양주</option>
+          <option value="소주">소주</option>
+          <option value="막걸리">막걸리</option>
+          <option value="술안주">술안주</option>
+          <option value="맥주">맥주</option>
+          {/* Add more categories as needed */}
+        </select>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="created">Sort by Created</option>
+          <option value="price">Sort by Price</option>
+          {/* Add more sorting options as needed */}
+        </select>
+      </div>
       <div className="grid grid-cols-3 w-full gap-5 p-5">
         {currentItems.map((product) => (
           <Link
