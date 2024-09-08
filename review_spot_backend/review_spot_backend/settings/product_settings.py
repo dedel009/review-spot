@@ -156,12 +156,27 @@ CORS_ALLOWED_ORIGINS = [
     'http://34.123.47.125',
     'http://127.0.0.1',
     'http://localhost',
-    'https://review-spot.vercel.app/',
+    'https://review-spot.vercel.app',
     'http://localhost:3000',
 ]
 
-# http이기 때문에
-# CORS 헤더를 비활성화
-# 추후 ssl을 nginx에 설치 후 https 요청으로
-# 변경하면 제거하기
-# SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE',
+    'PATCH',
+    'OPTIONS'
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
