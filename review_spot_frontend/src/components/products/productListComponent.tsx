@@ -9,13 +9,10 @@ import { Product } from "@/types/types";
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
 
-  // Fetch products from API
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch(
-          "http://34.123.47.125/api/products/?product_name=&category.name=&sort=created"
-        );
+        const res = await fetch("/api/products"); // 로컬 API 경로로 요청
         const result = await res.json();
         setProducts(result.data); // Set fetched products
       } catch (error) {
