@@ -1,131 +1,63 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "../common/pagenationComponent";
+import { Product } from "@/types/types";
+
 export default function ProductList() {
-  const products = [
-    {
-      id: 1,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 2,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 3,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 4,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 5,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 6,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 7,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 8,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 9,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-    {
-      id: 10,
-      name: "Evan Williams",
-      imgPath: "/evanWilliams.jpg",
-      alcohol: 10,
-      capacity: 5,
-      area: "부산",
-      category: "category",
-    },
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+
+  // Fetch products from API
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const res = await fetch(
+          "http://34.123.47.125/api/products/?product_name=&category.name=&sort=created"
+        );
+        const result = await res.json();
+        setProducts(result.data); // Set fetched products
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+    getData();
+  }, []);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9; // 한 페이지에 보여줄 상품 수
-  // 페이지에 따른 데이터 계산
+  const itemsPerPage = 9; // Number of items per page
+
+  // Pagination calculation
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
 
-  // 페이지 이동 함수
+  // Pagination function
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <div className="w-full flex flex-col">
       <div className="grid grid-cols-3 w-full gap-5 p-5">
         {currentItems.map((product) => (
-          <Link href={"/productInfo"} key={product.id}>
-            <div
-              key={product.id}
-              className="h-full flex flex-row items-center border border-sky-500 rounded-lg overflow-hidden ease duration-300 hover:-translate-y-2 w-full"
-            >
+          <Link
+            href={`/productInfo/${product.product_id}`}
+            key={product.product_id}
+          >
+            <div className="h-full flex flex-row items-center border border-sky-500 rounded-lg overflow-hidden ease duration-300 hover:-translate-y-2 w-full">
               <div className="relative w-48 h-48 flex-shrink-0">
                 <Image
-                  src={product.imgPath}
-                  alt={product.name}
+                  src={product.img_path}
+                  alt={product.product_name}
                   layout="fill"
-                  objectFit="contain"
+                  objectFit="cover" // Adjust objectFit as needed
+                  className="object-cover"
                 />
               </div>
               <div className="w-full h-full py-5 flex flex-col justify-between items-start">
                 <div className="flex">
                   <p className="px-5 text-left text-3xl flex-grow">
-                    {product.name}
+                    {product.product_name}
                   </p>
                 </div>
                 <div className="flex">
@@ -133,7 +65,7 @@ export default function ProductList() {
                     알코올 : {product.alcohol}
                   </p>
                   <p className="px-5 text-left text-base flex-grow">
-                    category : {product.category}
+                    category : {product.category.name}
                   </p>
                 </div>
                 <div className="flex">
