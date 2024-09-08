@@ -63,7 +63,7 @@ DJANGO_APPS = [
 INSTALLED_APPS = CUSTOM_APPS + ADDED_LIBRARY_APPS + DJANGO_APPS
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # 가장 위에 추가
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -152,6 +152,10 @@ STATIC_ROOT = '/var/www/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS 설정
+from corsheaders.defaults import default_headers, default_methods
+
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
     'http://34.123.47.125',
     'http://127.0.0.1',
@@ -160,23 +164,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
 
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'DELETE',
-    'PATCH',
-    'OPTIONS'
-]
+CORS_ALLOW_METHODS = list(default_methods)
 
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
+CORS_ALLOW_HEADERS = list(default_headers)
