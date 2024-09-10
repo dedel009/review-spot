@@ -15,11 +15,11 @@ class CustomPagination(PageNumberPagination):
     # max_page_size = 100
 
     def get_paginated_response(self, data, **kwargs):
-        return_status = kwargs.get('status')
-        print("return_status :::", return_status)
+        return_status = kwargs.get('status', status.HTTP_200_OK)
         return Response({
             'success': True,
             'message': '성공' if return_status == status.HTTP_200_OK else data,
+            'total_item': self.page.paginator.count if return_status == status.HTTP_200_OK else None,
             'data': data if return_status == status.HTTP_200_OK else None,
         })
 

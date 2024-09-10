@@ -2,9 +2,10 @@
 
 ![readme_mockup2](https://github.com/dedel009/review-spot/blob/master/title_image.jpg?raw=true)
 
-- 배포 URL :
-- Test ID :
-- Test PW :
+- 배포
+  - 프론트 URL : https://review-spot.vercel.app/reviews
+  - 백엔드 swagger URL : https://34.123.47.125/swagger/
+  - 백엔드 admin URL : https://34.123.47.125/admin/ 
 
 <br>
 
