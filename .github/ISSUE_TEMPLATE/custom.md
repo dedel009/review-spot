@@ -1,7 +1,7 @@
 ---
 name: Custom issue template
 about: Describe this issue template's purpose here.
-title: issue template
+title: 이슈 제목 기재
 labels: "➕ ETC"
 assignees: dedel009
 
@@ -11,7 +11,7 @@ assignees: dedel009
 
 - [x] FEAT
 - [ ] STYLE
-- [] FIX
+- [ ] FIX
 - [ ] CHORE
 - [ ] CI
 - [ ] DOCS
@@ -20,6 +20,6 @@ assignees: dedel009
 
 ## 🔎 작업 내용
 
-- [] 작업 내용 기재
+- [ ] 작업 내용 기재
 
 <br/>
