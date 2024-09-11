@@ -8,7 +8,7 @@ import { Product } from "@/types/types";
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("created");
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,13 +16,13 @@ export default function ProductList() {
 
   const fetchProducts = async () => {
     try {
-      const query = new URLSearchParams({
-        product_name: search,
-        "category.name": category,
+      const queryString = new URLSearchParams({
+        query,
+        "category.id": category,
         sort,
       }).toString();
 
-      const res = await fetch(`/lib/products?${query}`);
+      const res = await fetch(`/lib/products?${queryString}`);
       const result = await res.json();
       setProducts(result.data);
     } catch (error) {
@@ -40,7 +40,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchProducts();
-  }, [search, category, sort, currentPage]);
+  }, [query, category, sort, currentPage]);
 
   return (
     <div className="w-full flex flex-col">
@@ -48,8 +48,8 @@ export default function ProductList() {
         <input
           type="text"
           placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           className="border p-2 rounded"
         />
         <select
@@ -58,12 +58,11 @@ export default function ProductList() {
           className="border p-2 rounded"
         >
           <option value="">All Categories</option>
-          <option value="양주">양주</option>
-          <option value="소주">소주</option>
-          <option value="막걸리">막걸리</option>
-          <option value="술안주">술안주</option>
-          <option value="맥주">맥주</option>
-          {/* Add more categories as needed */}
+          <option value="1">양주</option>
+          <option value="2">소주</option>
+          <option value="3">막걸리</option>
+          <option value="4">술안주</option>
+          <option value="5">맥주</option>
         </select>
         <select
           value={sort}
@@ -71,7 +70,7 @@ export default function ProductList() {
           className="border p-2 rounded"
         >
           <option value="created">Sort by Created</option>
-          <option value="price">Sort by Price</option>
+          <option value="id">Sort by name</option>
           {/* Add more sorting options as needed */}
         </select>
       </div>
