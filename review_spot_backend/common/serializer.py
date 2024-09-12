@@ -12,8 +12,8 @@ class CommonListRequestSerializer(serializers.Serializer):
     #     help_text='한번에 표시할 검색 결과 개수',
     #     default=20
     # )
-    category = serializers.CharField(
-        help_text='리뷰 목록의 카테고리',
+    category_id = serializers.IntegerField(
+        help_text='상품에 해당하는 카테고리 ID',
         default='',
         required=False,
     )
