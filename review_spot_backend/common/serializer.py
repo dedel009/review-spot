@@ -13,7 +13,7 @@ class CommonListRequestSerializer(serializers.Serializer):
     #     default=20
     # )
     category_id = serializers.IntegerField(
-        help_text='상품에 해당하는 카테고리 ID',
+        help_text='카테고리 ID',
         default='',
         required=False,
     )
