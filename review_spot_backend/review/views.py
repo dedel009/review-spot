@@ -28,7 +28,7 @@ class ReviewAPIView(APIView):
         # 검색어
         query_params = request_serializer.validated_data.get('query', '')
         # 카테고리
-        category_params = request_serializer.validated_data.get('category', '')
+        category_id = request_serializer.validated_data.get('category_id', 0)
         # 정렬 방법
         sort = request_serializer.validated_data.get('sort', 'created')
 
@@ -44,9 +44,9 @@ class ReviewAPIView(APIView):
             )
 
         # 카테고리 필터
-        if category_params:
+        if category_id:
             review_queryset = review_queryset.filter(
-                Q(product__category__name__iexact=category_params)
+                Q(product__category_id=category_id)
             )
 
         # 정렬 처리

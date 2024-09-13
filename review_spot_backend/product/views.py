@@ -28,7 +28,7 @@ class ProductListApiView(APIView):
         # 검색어
         query_params = request_serializer.validated_data.get('query', '')
         # 카테고리
-        category_params = request_serializer.validated_data.get('category', '')
+        category_id = request_serializer.validated_data.get('category_id', 0)
         # 정렬 방법
         sort = request_serializer.validated_data.get('sort', 'created')
 
@@ -39,13 +39,13 @@ class ProductListApiView(APIView):
 
         # 검색어로 상품명 필터링
         if query_params:
-            product_qs = product_qs.first(
+            product_qs = product_qs.filter(
                 Q(name__icontains=query_params)
             )
 
-        if category_params:
-            product_qs = product_qs.first(
-                Q(category__name__icontains=category_params)
+        if category_id:
+            product_qs = product_qs.filter(
+                Q(category_id=category_id)
             )
 
         if sort == 'created':
