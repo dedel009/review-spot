@@ -14,7 +14,7 @@ class CommonListRequestSerializer(serializers.Serializer):
     # )
     category_id = serializers.IntegerField(
         help_text='카테고리 ID',
-        default='',
+        default=0,
         required=False,
     )
     sort = serializers.CharField(
