@@ -6,7 +6,15 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'review_spot_backend.settings.base_settings')
+    # 환경 변수를 사용하여 설정 파일 선택
+    env = os.environ.get('DJANGO_ENV', 'development')
+
+    if env == 'development':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'review_spot_backend.settings.base_settings')
+    elif env == 'production':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'review_spot_backend.settings.product_settings')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'review_spot_backend.settings.base_settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
