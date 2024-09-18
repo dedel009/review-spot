@@ -6,6 +6,9 @@ export async function GET(request: Request) {
         const url = new URL(request.url);
         const searchParams = url.searchParams;
 
+        console.log('searchParams', searchParams);
+
+
         // 외부 API 호출
         const response = await fetch(`https://34.123.47.125/api/products/?${searchParams.toString()}`, {
             method: 'GET',

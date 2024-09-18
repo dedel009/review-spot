@@ -65,7 +65,7 @@ export default function ProductInfo({
             {/* 상품 이미지 영역 */}
             <div className="relative w-2/5 h-80 my-3 flex-shrink-0 overflow-hidden">
               <Image
-                src={productInfo.img_path}
+                src={productInfo.img_path || ""}
                 alt={productInfo.product_name}
                 className="py-5 border"
                 layout="fill"
