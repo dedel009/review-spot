@@ -42,5 +42,7 @@ def GetCustomCode(code):
         return "성공."
     elif code == 'CODE_0001':
         return "존재하지 않는 대상입니다."
+    elif code == 'CODE_0002':
+        return "예기치 못한 에러입니다. 다시 시도해주세요."
 
 
