@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonListRequestSerializer
+from product.models import Product
 from review.serializer import ReivewListResponseSerializer, CreateReviewRequestSerializer
 
 
@@ -81,9 +82,14 @@ class ReviewAPIView(APIView):
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
+        product_id =  request_serializer.validated_data.get('product_id', 0)
+
+        print("product_id :::", product_id)
+
+
         # 생성 파라미터
         create_params = {
-            'product_id': request_serializer.validated_data.get('product_id', 0),
+
             'nickname': request_serializer.validated_data.get('nickname', ''),
             'content': request_serializer.validated_data.get('content', ''),
             'review_score_info': {
@@ -94,14 +100,18 @@ class ReviewAPIView(APIView):
             'aroma_profile': request_serializer.validated_data.get('aroma_profile', dict),
         }
 
-        # 리뷰 데이터 생성
-        from review.models import Review
-        Review.objects.create(**create_params)
-
-        return Response({
-            'success': True,
-            'message': '성공',
-            'data': None,
-        })
-
-
+        # 상품 데이터 유효성 검증
+        from common.utils import CustomResponse
+        try:
+            product = Product.objects.filter(id=product_id)
+            if product.exists():
+                create_params['product'] = product.first()
+                # 리뷰 데이터 생성
+                from review.models import Review
+                Review.objects.create(**create_params)
+                return CustomResponse(code='CODE_0000')
+            else:
+                return CustomResponse(code='CODE_0001')
+        except Exception as e:
+            print(f'예기치 못한 에러명 : {e}')
+            return CustomResponse(code='CODE_0002')
