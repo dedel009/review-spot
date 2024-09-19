@@ -82,10 +82,7 @@ class ReviewAPIView(APIView):
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
-        product_id =  request_serializer.validated_data.get('product_id', 0)
-
-        print("product_id :::", product_id)
-
+        product_id = request_serializer.validated_data.get('product_id', 0)
 
         # 생성 파라미터
         create_params = {
