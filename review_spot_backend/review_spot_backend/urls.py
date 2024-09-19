@@ -48,11 +48,10 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-    #
     # 사용자가 추가한 앱 url
     # 제품 url
-    path('api/products/', include('product.urls')),
+    path('api/products', include('product.urls')),
     # 리뷰 url
-    path('api/reviews/', include('review.urls')),
+    path(r'api/reviews', include('review.urls')),
 
 ]
