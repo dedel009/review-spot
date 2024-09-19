@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': 'review_spot_main',
         'USER': 'developer',
         'PASSWORD': 'reviewspot',
-        'HOST': '35.232.134.75',
+        'HOST': '104.198.25.213',
         'PORT': '5432',
     }
 
