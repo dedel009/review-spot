@@ -150,8 +150,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 커스텀 유저 설정
-AUTH_USER_MODEL = 'user.CustomUser'
+# 장고 어드민 계정에서 사용할 커스텀 유저 모델 지정
+AUTH_USER_MODEL = 'user.CustomAdmin'
 
 # jwt 토큰 설정
 REST_FRAMEWORK = {

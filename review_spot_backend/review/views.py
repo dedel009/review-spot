@@ -1,6 +1,8 @@
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -78,6 +80,11 @@ class ReviewAPIView(APIView):
         operation_description="리뷰 작성 API",
     )
     def post(self, reqeust: Request, *args, **kwargs):
+        from common.utils import CustomResponse
+        # 인증된 사용자만 접근 가능하도록 커스텀 설정
+        if reqeust.user.is_authenticated:
+            return CustomResponse(code='CODE_0004', status_code=status.HTTP_201_CREATED)
+
         request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
@@ -98,7 +105,7 @@ class ReviewAPIView(APIView):
         }
 
         # 상품 데이터 유효성 검증
-        from common.utils import CustomResponse
+
         try:
             product = Product.objects.filter(id=product_id)
             if product.exists():

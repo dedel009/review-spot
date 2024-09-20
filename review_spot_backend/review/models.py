@@ -42,6 +42,11 @@ class Review(models.Model):
         on_delete=models.PROTECT,
     )
 
+    user = models.ForeignKey(
+        'user.CustomUser',
+        on_delete=models.PROTECT,
+    )
+
     is_active = models.BooleanField(
         verbose_name='사용 유무',
         default=True,
