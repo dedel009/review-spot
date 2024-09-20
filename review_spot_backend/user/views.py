@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.request import Request
@@ -13,6 +12,7 @@ class CustomLoginApiView(APIView):
     """
     사용자 계정만 사용하는 API(추후 관리자 계정 로그인 API 개발 예정)
     """
+
     @swagger_auto_schema(
         request_body=LoginRequestSerializer,
         responses={200: ''},

@@ -1,10 +1,7 @@
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonListRequestSerializer
@@ -82,14 +79,18 @@ class ReviewAPIView(APIView):
     def post(self, reqeust: Request, *args, **kwargs):
         from common.utils import CustomResponse
         # 인증된 사용자만 접근 가능하도록 커스텀 설정
-        if reqeust.user.is_authenticated:
-            return CustomResponse(code='CODE_0004', status_code=status.HTTP_201_CREATED)
+        # if reqeust.user.is_authenticated:
+        #     return CustomResponse(code='CODE_0004')
 
         request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
         product_id = request_serializer.validated_data.get('product_id', 0)
+
+        # jwt토큰에서 유저 정보 가져오기
+        user = reqeust.user
+        print("user :::", user)
 
         # 생성 파라미터
         create_params = {

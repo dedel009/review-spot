@@ -37,6 +37,11 @@ class CustomUser(AbstractBaseUser):
         null=False,
         verbose_name='유저 이름',
     )
+    nickname = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name='유저 닉네임'
+    )
     email = models.EmailField(
         blank=True,
         verbose_name='유저 이메일',
