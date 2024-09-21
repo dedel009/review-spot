@@ -65,11 +65,11 @@ export default function ProductList() {
           className="border p-2 rounded"
         >
           <option value="0">All Categories</option>
-          <option value="1">양주</option>
-          <option value="2">소주</option>
-          <option value="3">막걸리</option>
-          <option value="4">술안주</option>
-          <option value="5">맥주</option>
+          <option value="3">양주</option>
+          <option value="4">맥주</option>
+          <option value="5">소주</option>
+          <option value="6">안주</option>
+          {/* <option value="5">맥주</option> */}
         </select>
         <select
           value={sort}
@@ -100,7 +100,7 @@ export default function ProductList() {
                 </div>
                 <div className="w-full h-full py-5 flex flex-col justify-between items-start">
                   <div className="flex">
-                    <p className="px-5 text-left text-3xl flex-grow">
+                    <p className="px-5 text-left text-2xl flex-grow">
                       {product.product_name}
                     </p>
                   </div>
