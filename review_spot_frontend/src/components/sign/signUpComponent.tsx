@@ -1,6 +1,19 @@
-import Image from "next/image";
+"use client";
 
+import Image from "next/image";
+import { useState } from "react";
+import Modal from "../common/modal";
 export default function SignUpComponent() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="h-full px-52 flex justify-center items-start bg-gray-100">
       {/* Left Side: Simple Sentences */}
@@ -18,7 +31,10 @@ export default function SignUpComponent() {
         <div className="space-y-6 px-14 py-20">
           {/* Username Field */}
           <div>
-            <label htmlFor="username" className="block text-gray-700">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 after:content-['*'] after:inline after:text-[#f9572e]"
+            >
               Username
             </label>
             <input
@@ -30,7 +46,10 @@ export default function SignUpComponent() {
           </div>
           {/* Email Field */}
           <div>
-            <label htmlFor="email" className="block text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-gray-700 after:content-['*'] after:inline after:text-[#f9572e]"
+            >
               Email
             </label>
             <input
@@ -42,7 +61,10 @@ export default function SignUpComponent() {
           </div>
           {/* Password Field */}
           <div>
-            <label htmlFor="password" className="block text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 after:content-['*'] after:inline after:text-[#f9572e]"
+            >
               Password
             </label>
             <input
@@ -54,9 +76,12 @@ export default function SignUpComponent() {
           </div>
           <div>
             <label htmlFor="terms" className="block text-gray-700">
-              <input type="checkbox" name="terms" id="termsCheck" /> I accept
-              the Review-Spot &nbsp;
-              <button className="text-blue-500 underline hover:text-blue-800">
+              <input type="checkbox" name="terms" id="termsCheck" />
+              <span> I accept the Review-Spot </span>
+              <button
+                className="text-blue-500 underline hover:text-blue-800 after:content-['*'] after:inline after:text-[#f9572e]"
+                onClick={openModal}
+              >
                 terms and conditions
               </button>
             </label>
@@ -83,6 +108,18 @@ export default function SignUpComponent() {
               </div>
             </fieldset>
           </div>
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <h2 className="text-2xl font-bold mb-4">
+              Review-Spot General Terms and Conditions
+            </h2>
+            <p className="mb-4">내용이 들어가야 함</p>
+            <button
+              className="float-right bg-gray-500 text-white py-2 px-4 rounded"
+              onClick={closeModal}
+            >
+              닫기
+            </button>
+          </Modal>
         </div>
       </div>
     </div>
