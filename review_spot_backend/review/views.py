@@ -95,6 +95,8 @@ class ReviewAPIView(APIView):
         print("request_serializer :::", request_serializer.data)
 
         product_id = request_serializer.validated_data.get('product_id', 0)
+        # jwt 토큰에서 유저 정보 가져오기
+        user = reqeust.user
 
         # 생성 파라미터
         create_params = {
@@ -112,8 +114,9 @@ class ReviewAPIView(APIView):
         from common.utils import CustomResponse
         try:
             product = Product.objects.filter(id=product_id)
-            if product.exists():
+            if all([product.exists(), user]):
                 create_params['product'] = product.first()
+                create_params['user'] = user
                 # 리뷰 데이터 생성
                 from review.models import Review
                 Review.objects.create(**create_params)
