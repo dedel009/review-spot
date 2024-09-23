@@ -1,8 +1,8 @@
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonListRequestSerializer
@@ -12,6 +12,17 @@ from review.serializer import ReivewListResponseSerializer, CreateReviewRequestS
 
 # 리뷰 작성 및 리스트 조회 API
 class ReviewAPIView(APIView):
+
+    # HTTP 요청이 들어올 때 호출되는 메서드
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            # POST 요청에 대해서만 JWT 인증과 권한 검사 적용
+            from common.authentication import CustomJWTAuthentication
+            self.authentication_classes = [CustomJWTAuthentication]
+            self.permission_classes = [IsAuthenticated]
+
+        # 부모 클래스의 dispatch 메서드를 호출하여 적절한 핸들러로 요청을 전달
+        return super().dispatch(request, *args, **kwargs)
 
     @swagger_auto_schema(
         query_serializer=CommonListRequestSerializer,
@@ -78,6 +89,7 @@ class ReviewAPIView(APIView):
         operation_description="리뷰 작성 API",
     )
     def post(self, reqeust: Request, *args, **kwargs):
+
         request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
@@ -86,7 +98,6 @@ class ReviewAPIView(APIView):
 
         # 생성 파라미터
         create_params = {
-
             'nickname': request_serializer.validated_data.get('nickname', ''),
             'content': request_serializer.validated_data.get('content', ''),
             'review_score_info': {
