@@ -5,7 +5,10 @@
 - 배포
   - 프론트 URL : https://review-spot.vercel.app/reviews
   - 백엔드 swagger URL : https://34.123.47.125/swagger/
-  - 백엔드 admin URL : https://34.123.47.125/admin/ 
+  - 백엔드 admin URL : https://34.123.47.125/admin/
+- 협업 툴
+  - 노션 URL : https://www.notion.so/Review-Spot-09666bbf65314932b8f01f0c960cbf2a
+    
 
 <br>
 
