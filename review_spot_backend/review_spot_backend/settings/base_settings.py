@@ -162,7 +162,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # 기본적으로 모든 API에 대해 인증을 요구하지 않음
-        # 'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
