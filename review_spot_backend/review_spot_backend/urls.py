@@ -54,6 +54,6 @@ urlpatterns = [
     # 리뷰 url
     path('api/reviews', include('review.urls')),
     # 인증 url
-    path('api/login', include('user.urls')),
+    path('api/', include('user.urls')),
 
 ]

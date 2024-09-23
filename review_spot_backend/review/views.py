@@ -1,6 +1,7 @@
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
@@ -11,6 +12,17 @@ from review.serializer import ReivewListResponseSerializer, CreateReviewRequestS
 
 # 리뷰 작성 및 리스트 조회 API
 class ReviewAPIView(APIView):
+
+    # HTTP 요청이 들어올 때 호출되는 메서드
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            # POST 요청에 대해서만 JWT 인증과 권한 검사 적용
+            from common.authentication import CustomJWTAuthentication
+            self.authentication_classes = [CustomJWTAuthentication]
+            self.permission_classes = [IsAuthenticated]
+
+        # 부모 클래스의 dispatch 메서드를 호출하여 적절한 핸들러로 요청을 전달
+        return super().dispatch(request, *args, **kwargs)
 
     @swagger_auto_schema(
         query_serializer=CommonListRequestSerializer,
@@ -77,10 +89,6 @@ class ReviewAPIView(APIView):
         operation_description="리뷰 작성 API",
     )
     def post(self, reqeust: Request, *args, **kwargs):
-        from common.utils import CustomResponse
-        # 인증된 사용자만 접근 가능하도록 커스텀 설정
-        # if reqeust.user.is_authenticated:
-        #     return CustomResponse(code='CODE_0004')
 
         request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
         request_serializer.is_valid(raise_exception=True)
@@ -88,13 +96,8 @@ class ReviewAPIView(APIView):
 
         product_id = request_serializer.validated_data.get('product_id', 0)
 
-        # jwt토큰에서 유저 정보 가져오기
-        user = reqeust.user
-        print("user :::", user)
-
         # 생성 파라미터
         create_params = {
-
             'nickname': request_serializer.validated_data.get('nickname', ''),
             'content': request_serializer.validated_data.get('content', ''),
             'review_score_info': {
@@ -106,7 +109,7 @@ class ReviewAPIView(APIView):
         }
 
         # 상품 데이터 유효성 검증
-
+        from common.utils import CustomResponse
         try:
             product = Product.objects.filter(id=product_id)
             if product.exists():

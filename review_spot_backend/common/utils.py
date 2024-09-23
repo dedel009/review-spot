@@ -42,7 +42,7 @@ def CustomResponse(code='CODE_0000', data=None, status_code=status.HTTP_200_OK):
 # 메세지 반환 메소드
 def GetCustomCode(code):
     if code == 'CODE_0000':
-        return "성공."
+        return "성공"
     elif code == 'CODE_0001':
         return "존재하지 않는 대상입니다."
     elif code == 'CODE_0002':
@@ -51,6 +51,10 @@ def GetCustomCode(code):
         return "비밀번호가 일치하지 않습니다."
     elif code == 'CODE_0004':
         return "인증되지 않은 요청입니다."
+    elif code == 'CODE_0005':
+        return "리프레시 토큰이 제공되지 않았습니다."
+    elif code == 'CODE_0006':
+        return "유효하지 않은 리프레시 토큰입니다."
 
 
 
