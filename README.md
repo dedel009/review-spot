@@ -38,7 +38,7 @@
 - 버전 및 이슈관리 : Github, Github Issues, Github Project
 - 협업 툴 : Notion, gather
 - IDE : Pycharm, vsCode
-- 서비스 배포 환경 : GCP를 사용한 ubuntu 서버(nginx, gunicorn, django)
+- 서비스 배포 환경 : GCP를 사용한 ubuntu 서버(nginx, gunicorn, django) / 무료 기간 만료로 인해 AWS 클라우드 서버로 이전(도커 컴포즈를 이용해 환경세팅)
   <br>
 
 ## 2. 채택한 개발 기술과 브랜치 전략
