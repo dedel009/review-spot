@@ -35,6 +35,7 @@ STATIC_ROOT = '/var/www/static/'
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
+    'http://3.39.234.40',
     'http://34.123.47.125',
     'http://127.0.0.1',
     'http://localhost',
