@@ -16,6 +16,7 @@ from corsheaders.defaults import default_headers, default_methods
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    '3.39.234.40',
     '34.123.47.125',
     '127.0.0.1',
     'localhost',
