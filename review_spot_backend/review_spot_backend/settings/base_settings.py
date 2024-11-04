@@ -101,7 +101,7 @@ DATABASES = {
         'NAME': 'review_spot_main',
         'USER': 'developer',
         'PASSWORD': 'reviewspot',
-        'HOST': '104.198.25.213',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 
