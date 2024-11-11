@@ -101,7 +101,7 @@ DATABASES = {
         'NAME': 'review_spot_main',
         'USER': 'developer',
         'PASSWORD': 'reviewspot',
-        'HOST': 'db',
+        'HOST': 'postgresql-db',
         'PORT': '5432',
     }
 
