@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+import sentry_sdk
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -101,10 +102,9 @@ DATABASES = {
         'NAME': 'review_spot_main',
         'USER': 'developer',
         'PASSWORD': 'reviewspot',
-        'HOST': 'postgresql-db',
+        'HOST': '3.39.234.40',
         'PORT': '5432',
     }
-
 }
 
 
@@ -210,3 +210,18 @@ SWAGGER_SETTINGS = {
     },
     'USE_SESSION_AUTH': False,  # 세션 인증 비활성화 (JWT를 사용하므로)
 }
+
+sentry_sdk.init(
+    dsn="https://e41547dd9fff77e3a196f283fa052b01@o4508335294119936.ingest.us.sentry.io/4508335295234048",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+    environment='development',
+    release='review_spot_20241121_first_init',
+)
