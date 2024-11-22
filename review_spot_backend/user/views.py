@@ -10,7 +10,7 @@ from user.serializers import LoginRequestSerializer, TokenRefreshRequestSerializ
     TokenRefreshResponseSerializer
 
 
-class CustomLoginApiView(APIView):
+class CustomLoginAPIView(APIView):
     """
     사용자 계정만 사용하는 API(추후 관리자 계정 로그인 API 개발 예정)
     """
@@ -85,3 +85,10 @@ class TokenRefreshAPIView(APIView):
         except TokenError as e:
             # 토큰이 유효하지 않거나 만료된 경우 예외 처리
             return CustomResponse(code='CODE_0006', status_code=status.HTTP_401_UNAUTHORIZED)
+
+
+class UserSignUpAPIView(APIView):
+    """
+    유저 회원가입 API
+    """
+
