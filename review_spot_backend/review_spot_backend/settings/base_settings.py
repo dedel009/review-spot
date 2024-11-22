@@ -213,8 +213,7 @@ SWAGGER_SETTINGS = {
 
 sentry_sdk.init(
     dsn="https://e41547dd9fff77e3a196f283fa052b01@o4508335294119936.ingest.us.sentry.io/4508335295234048",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
+    # 성능 모니터링을 위한 샘플링 비율(0.0 ~ 1.0)을 설정
     traces_sample_rate=1.0,
     _experiments={
         # Set continuous_profiling_auto_start to True
@@ -222,6 +221,8 @@ sentry_sdk.init(
         # possible.
         "continuous_profiling_auto_start": True,
     },
+    # 환경 설정
     environment='development',
+    # 릴리스 버전 설정
     release='review_spot_20241121_first_init',
 )
