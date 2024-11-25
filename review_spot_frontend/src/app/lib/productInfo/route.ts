@@ -7,7 +7,7 @@ export async function GET(request: Request) {
         const searchParams = url.searchParams;
 
         // 외부 API 호출
-        const response = await fetch(`https://34.123.47.125/api/products/detail?${searchParams.toString()}`, {
+        const response = await fetch(`http://3.39.234.40/api/products/detail?${searchParams.toString()}`, {
             method: 'GET',
             // 헤더 추가 필요 시 여기에 추가
             headers: {
