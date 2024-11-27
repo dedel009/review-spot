@@ -121,13 +121,13 @@ const oakAromas = [
 
 export default function ReviewCreateComponent() {
   const [review, setReview] = useState<ReviewFormData>({
-    product_id: 0,
+    productId: 0,
     nickname: "",
-    nose_score: 0,
-    palate_score: 0,
-    finish_score: 0,
+    noseScore: 0,
+    palateScore: 0,
+    finishScore: 0,
     content: "",
-    aroma_profile: {
+    aromaProfile: {
       labels: [],
       scores: [] as number[],
     },
@@ -163,13 +163,13 @@ export default function ReviewCreateComponent() {
 
   const handleAromaChange = (index: number, value: number) => {
     setReview((prevReview) => {
-      const newAromaData = [...(prevReview.aroma_profile?.scores || [])];
+      const newAromaData = [...(prevReview.aromaProfile?.scores || [])];
       newAromaData[index] = value;
 
       return {
         ...prevReview,
-        aroma_profile: {
-          ...prevReview.aroma_profile,
+        aromaProfile: {
+          ...prevReview.aromaProfile,
           scores: newAromaData,
         },
       };
@@ -178,8 +178,8 @@ export default function ReviewCreateComponent() {
 
   const handleAromaCheckboxChange = (label: string, checked: boolean) => {
     setReview((prevReview) => {
-      let newLabels = [...prevReview.aroma_profile.labels];
-      let newScores = [...prevReview.aroma_profile.scores]; // 'scores'로 변경
+      let newLabels = [...prevReview.aromaProfile.labels];
+      let newScores = [...prevReview.aromaProfile.scores]; // 'scores'로 변경
 
       if (checked) {
         if (newLabels.length >= 10) {
@@ -198,7 +198,7 @@ export default function ReviewCreateComponent() {
 
       return {
         ...prevReview,
-        aroma_profile: {
+        aromaProfile: {
           labels: newLabels,
           scores: newScores, // 'scores'로 변경
         },
@@ -207,11 +207,11 @@ export default function ReviewCreateComponent() {
   };
 
   const radarChartData = {
-    labels: review.aroma_profile?.labels || [],
+    labels: review.aromaProfile?.labels || [],
     datasets: [
       {
         label: "Aroma Profile",
-        data: review.aroma_profile?.scores || [],
+        data: review.aromaProfile?.scores || [],
         backgroundColor: "rgba(34, 202, 236, .2)",
         borderColor: "rgba(34, 202, 236, 1)",
         pointBackgroundColor: "rgba(34, 202, 236, 1)",
@@ -267,7 +267,7 @@ export default function ReviewCreateComponent() {
           </label>
           <select
             name="product_id"
-            value={review.product_id || 0}
+            value={review.productId || 0}
             onChange={handleProductChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -290,7 +290,7 @@ export default function ReviewCreateComponent() {
           <input
             type="number"
             name="nose_score"
-            value={review.nose_score || 0}
+            value={review.noseScore || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -306,7 +306,7 @@ export default function ReviewCreateComponent() {
           <input
             type="number"
             name="palate_score"
-            value={review.palate_score || 0}
+            value={review.palateScore || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -322,7 +322,7 @@ export default function ReviewCreateComponent() {
           <input
             type="number"
             name="finish_score"
-            value={review.finish_score || 0}
+            value={review.finishScore || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -354,9 +354,7 @@ export default function ReviewCreateComponent() {
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={
-                    review.aroma_profile?.labels.includes(aroma) || false
-                  }
+                  checked={review.aromaProfile?.labels.includes(aroma) || false}
                   onChange={(e) =>
                     handleAromaCheckboxChange(aroma, e.target.checked)
                   }
@@ -374,9 +372,7 @@ export default function ReviewCreateComponent() {
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={
-                    review.aroma_profile?.labels.includes(aroma) || false
-                  }
+                  checked={review.aromaProfile?.labels.includes(aroma) || false}
                   onChange={(e) =>
                     handleAromaCheckboxChange(aroma, e.target.checked)
                   }
@@ -394,9 +390,7 @@ export default function ReviewCreateComponent() {
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={
-                    review.aroma_profile?.labels.includes(aroma) || false
-                  }
+                  checked={review.aromaProfile?.labels.includes(aroma) || false}
                   onChange={(e) =>
                     handleAromaCheckboxChange(aroma, e.target.checked)
                   }
@@ -414,9 +408,7 @@ export default function ReviewCreateComponent() {
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={
-                    review.aroma_profile?.labels.includes(aroma) || false
-                  }
+                  checked={review.aromaProfile?.labels.includes(aroma) || false}
                   onChange={(e) =>
                     handleAromaCheckboxChange(aroma, e.target.checked)
                   }
@@ -434,9 +426,7 @@ export default function ReviewCreateComponent() {
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={
-                    review.aroma_profile?.labels.includes(aroma) || false
-                  }
+                  checked={review.aromaProfile?.labels.includes(aroma) || false}
                   onChange={(e) =>
                     handleAromaCheckboxChange(aroma, e.target.checked)
                   }
@@ -454,9 +444,7 @@ export default function ReviewCreateComponent() {
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={
-                    review.aroma_profile?.labels.includes(aroma) || false
-                  }
+                  checked={review.aromaProfile?.labels.includes(aroma) || false}
                   onChange={(e) =>
                     handleAromaCheckboxChange(aroma, e.target.checked)
                   }
@@ -470,15 +458,15 @@ export default function ReviewCreateComponent() {
 
         <div className="mt-6">
           <h2 className="text-lg font-semibold mb-2">아로마 프로필</h2>
-          {review.aroma_profile?.labels.map((label, index) => (
+          {review.aromaProfile?.labels.map((label, index) => (
             <div key={label} className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
-                {label} 점수: {review.aroma_profile?.scores[index] || 0}
+                {label} 점수: {review.aromaProfile?.scores[index] || 0}
               </label>
               <input
                 type="range"
                 name={`aroma-${label}`}
-                value={review.aroma_profile?.scores[index] || 0}
+                value={review.aromaProfile?.scores[index] || 0}
                 onChange={(e) =>
                   handleAromaChange(index, parseInt(e.target.value, 10))
                 }
