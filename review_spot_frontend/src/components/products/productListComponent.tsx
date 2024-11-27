@@ -85,14 +85,14 @@ export default function ProductList() {
         <div className="grid grid-cols-3 w-full gap-5 p-5">
           {currentItems.map((product) => (
             <Link
-              href={`/productInfo/${product.product_id}/${product.category.id}`}
-              key={product.product_id}
+              href={`/productInfo/${product.id}/${product.product_info.category.id}`}
+              key={product.id}
             >
               <div className="h-full flex flex-row items-center border border-sky-500 rounded-lg overflow-hidden ease duration-300 hover:-translate-y-2 w-full">
                 <div className="relative w-48 h-48 flex-shrink-0">
                   <Image
-                    src={product.img_path || ""}
-                    alt={product.product_name}
+                    src={product.imgPath || ""}
+                    alt={product.name}
                     layout="fill"
                     objectFit="cover" // Adjust objectFit as needed
                     className="object-cover"
@@ -101,23 +101,23 @@ export default function ProductList() {
                 <div className="w-full h-full py-5 flex flex-col justify-between items-start">
                   <div className="flex">
                     <p className="px-5 text-left text-2xl flex-grow">
-                      {product.product_name}
+                      {product.name}
                     </p>
                   </div>
                   <div className="flex">
                     <p className="px-5 text-left text-base flex-grow">
-                      알코올 : {product.alcohol}
+                      알코올 : {product.product_info.alcohol}
                     </p>
                     <p className="px-5 text-left text-base flex-grow">
-                      category : {product.category.name}
+                      category : {product.product_info.category.name}
                     </p>
                   </div>
                   <div className="flex">
                     <p className="px-5 text-left text-base flex-grow">
-                      capacity : {product.capacity}
+                      capacity : {product.product_info.capacity}
                     </p>
                     <p className="px-5 text-left text-base flex-grow">
-                      지역 : {product.area}
+                      지역 : {product.product_info.area}
                     </p>
                   </div>
                 </div>
@@ -134,10 +134,10 @@ export default function ProductList() {
       )}
       <div className="w-full flex justify-center items-center">
         <Pagination
-          itemsPerPage={itemsPerPage}
-          totalItems={products ? products.length : 0}
+          items_per_page={itemsPerPage}
+          total_items={products ? products.length : 0}
           paginate={paginate}
-          currentPage={currentPage}
+          current_page={currentPage}
         />
       </div>
     </div>
