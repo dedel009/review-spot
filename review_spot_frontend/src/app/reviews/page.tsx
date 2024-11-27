@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation"; // useSearchParams 추가
 import { ReviewItem } from "@/types/types";
 import ReviewsItemComponent from "@/components/reviews/reviewsItemComponent";
@@ -50,30 +50,32 @@ export default function ReviewsPage() {
   };
 
   return (
-    <main className="container-xl">
-      <section className="p-8 flex flex-col space-y-20">
-        {items.length === 0 ? (
-          <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
-            <h2 className="text-2xl font-bold text-gray-800">
-              No reviews found
-            </h2>
-          </div>
-        ) : (
-          <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
-            <article className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
-              {items.map((item) => (
-                <ReviewsItemComponent key={item.id} item={item} />
-              ))}
-            </article>
-            <Pagination
-              itemsPerPage={itemsPerPage}
-              totalItems={totalItems}
-              paginate={handlePageChange} // handlePageChange를 paginate로 전달
-              currentPage={currentPage}
-            />
-          </div>
-        )}
-      </section>
-    </main>
+    <Suspense fallback={<div>Loading...</div>}>
+      <main className="container-xl">
+        <section className="p-8 flex flex-col space-y-20">
+          {items.length === 0 ? (
+            <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
+              <h2 className="text-2xl font-bold text-gray-800">
+                No reviews found
+              </h2>
+            </div>
+          ) : (
+            <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
+              <article className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
+                {items.map((item) => (
+                  <ReviewsItemComponent key={item.id} item={item} />
+                ))}
+              </article>
+              <Pagination
+                itemsPerPage={itemsPerPage}
+                totalItems={totalItems}
+                paginate={handlePageChange} // handlePageChange를 paginate로 전달
+                currentPage={currentPage}
+              />
+            </div>
+          )}
+        </section>
+      </main>
+    </Suspense>
   );
 }
