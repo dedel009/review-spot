@@ -12,14 +12,14 @@ export default function ReviewsItemComponent({
 }: ReviewsItemComponentProps) {
   const {
     nickname,
-    avg_score,
-    nose_score,
-    palate_score,
-    finish_score,
+    avgScore,
+    noseScore,
+    palateScore,
+    finishScore,
     content,
     // created_at,
     product,
-    aroma_profile, // aromaProfile를 받아서 사용
+    aromaProfile, // aromaProfile를 받아서 사용
   } = item;
 
   // Stacked Bar 차트 데이터
@@ -28,7 +28,7 @@ export default function ReviewsItemComponent({
     datasets: [
       {
         label: "Score", // 차트의 레이블
-        data: [nose_score, palate_score, finish_score], // 각 축에 대한 데이터
+        data: [noseScore, palateScore, finishScore], // 각 축에 대한 데이터
         backgroundColor: [
           "rgba(255, 99, 132, 0.5)",
           "rgba(54, 162, 235, 0.5)",
@@ -46,11 +46,11 @@ export default function ReviewsItemComponent({
 
   // 레이더 차트 데이터는 aromaProfile로부터 직접 가져옵니다.
   const radarChartData = {
-    labels: aroma_profile?.labels || [], // aroma_profile이 없으면 빈 배열로 대체
+    labels: aromaProfile?.labels || [], // aroma_profile이 없으면 빈 배열로 대체
     datasets: [
       {
-        label: `${product.name} Aroma Profile`,
-        data: aroma_profile?.scores || [], // aroma_profile이 없으면 빈 배열로 대체
+        label: `${product.product_name} Aroma Profile`,
+        data: aromaProfile?.scores || [], // aroma_profile이 없으면 빈 배열로 대체
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
         pointBackgroundColor: "rgba(54, 162, 235, 1)",
@@ -63,7 +63,7 @@ export default function ReviewsItemComponent({
       <div className="flex flex-col md:flex-row space-x-4 w-full h-full">
         {/* 왼쪽 영역 */}
         <div className="flex flex-col basis-3/4 justify-start items-center bg-white w-full h-full">
-          <h1>{`${nickname}님이 ${product.name}에 대해서 ${avg_score}를 주었습니다.`}</h1>
+          <h1>{`${nickname}님이 ${product.product_name}에 대해서 ${avgScore}를 주었습니다.`}</h1>
           {/* <p className="text-gray-300">{`${created_at}`}</p> */}
           <div className="flex flex-col md:flex-row justify-center items-start p-4">
             <p className="basis-2/3">{content}</p>
@@ -79,13 +79,13 @@ export default function ReviewsItemComponent({
         </div>
 
         {/* 오른쪽 영역 */}
-        <Link href={`/reviews/${item.review_id}`}>
+        <Link href={`/reviews/${item.id}`}>
           <div className="flex basis-1/4 bg-white w-full ">
             <div className="flex justify-center items-center w-full ">
-              {product.imgPath ? (
+              {product.img_path ? (
                 <Image
-                  src={product.imgPath} // 이미지 경로
-                  alt={product.name} // 대체 텍스트
+                  src={product.img_path} // 이미지 경로
+                  alt={product.product_name} // 대체 텍스트
                   width={200} // 너비
                   height={200} // 높이
                 />
@@ -94,9 +94,9 @@ export default function ReviewsItemComponent({
               )}
 
               <div className="flex flex-col justify-center items-center">
-                <p>{`Alcohol: ${product.product_info.alcohol}%`}</p>
-                <p>{`Capacity: ${product.product_info.capacity}ml`}</p>
-                <p>{`Area: ${product.product_info.area}`}</p>
+                <p>{`Alcohol: ${product.alcohol}%`}</p>
+                <p>{`Capacity: ${product.capacity}ml`}</p>
+                <p>{`Area: ${product.area}`}</p>
                 <p>{`Category: ${product.category}`}</p>
               </div>
             </div>
