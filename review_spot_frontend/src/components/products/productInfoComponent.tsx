@@ -1,5 +1,5 @@
 "use client";
-import { ProductInfo } from "@/types/types";
+import type { ProductInfo } from "@/types/types";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
