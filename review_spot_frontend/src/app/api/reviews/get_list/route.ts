@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
     // Make a request to the Django server with page and limit as query parameters
     const res = await fetch(
-      `https://34.123.47.125/api/reviews?page_num=${page}&display=${limit}`
+      `http://3.39.234.40/api/reviews?page_num=${page}&display=${limit}`
     );
 
     if (!res.ok) {

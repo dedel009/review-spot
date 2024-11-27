@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
     // Django 서버로 요청 보내기
-    const res = await fetch("https://34.123.47.125/api/reviews", {
+    const res = await fetch("http://3.39.234.40/api/reviews", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
