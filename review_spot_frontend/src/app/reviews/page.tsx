@@ -62,14 +62,14 @@ export default function ReviewsPage() {
           <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
             <article className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
               {items.map((item) => (
-                <ReviewsItemComponent key={item.review_id} item={item} />
+                <ReviewsItemComponent key={item.id} item={item} />
               ))}
             </article>
             <Pagination
-              items_per_page={itemsPerPage}
-              total_items={totalItems}
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
               paginate={handlePageChange} // handlePageChange를 paginate로 전달
-              current_page={currentPage}
+              currentPage={currentPage}
             />
           </div>
         )}
