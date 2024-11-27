@@ -65,11 +65,11 @@ export default function ProductList() {
           className="border p-2 rounded"
         >
           <option value="0">All Categories</option>
-          <option value="1">양주</option>
-          <option value="2">소주</option>
-          <option value="3">막걸리</option>
-          <option value="4">술안주</option>
-          <option value="5">맥주</option>
+          <option value="2">맥주</option>
+          <option value="3">소주</option>
+          <option value="4">양주</option>
+          <option value="5">와인</option>
+          <option value="6">막걸리</option>
         </select>
         <select
           value={sort}
