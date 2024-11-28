@@ -6,9 +6,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 export async function GET(req: NextRequest) {
   try {
     // Extract page and limit from the query parameters
-    const url = new URL(req.url); // URL 객체를 사용하여 쿼리 파라미터 추출
-    const page = parseInt(url.searchParams.get("page_num") || "1", 10);
-    const limit = parseInt(url.searchParams.get("display") || "10", 10);
+    const { searchParams } = req.nextUrl;  // req.nextUrl 사용
+    const page = parseInt(searchParams.get("pageNum") || "1", 10);
+    const limit = parseInt(searchParams.get("display") || "10", 10);
 
     // Make a request to the Django server with page and limit as query parameters
     const res = await fetch(
@@ -24,7 +24,6 @@ export async function GET(req: NextRequest) {
     const json = await res.json();
 
     const response = NextResponse.json(json);
-
     return response;
   } catch (error) {
     console.error("Error fetching reviews:", error);

@@ -51,6 +51,7 @@ export default function ReviewsItemComponent({
       {
         label: `${product.product_name} Aroma Profile`,
         data: aromaProfile?.scores || [], // aroma_profile이 없으면 빈 배열로 대체
+
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
         pointBackgroundColor: "rgba(54, 162, 235, 1)",

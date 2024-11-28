@@ -1,4 +1,6 @@
 "use client";
+
+import { getProductInfo } from "@/app/api/products/productInfo";
 import type { ProductInfo } from "@/types/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,15 +33,12 @@ export default function ProductInfo({
 
   const getProductDetail = async () => {
     try {
-      const query =
-        "product_id=" +
-        params.product_id +
-        "&" +
-        "category_id=" +
-        params.category_id;
-      const res = await fetch(`/lib/productInfo?${query}`);
-      const result = await res.json();
-      setProductInfo(result.data);
+      const query: any = {};
+      query.product_id = params.product_id;
+      query.category_id = params.category_id;
+      const res = await getProductInfo(query);
+
+      setProductInfo(res);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     }
