@@ -172,12 +172,13 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # 기본적으로 모든 API에 대해 인증을 요구하지 않음
+        # 'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
 # 추가적인 JWT 설정, 다 쓸 필요는 없지만 혹시 몰라서 다 넣었다.
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     # 'ROTATE_REFRESH_TOKENS': False,
     # 'BLACKLIST_AFTER_ROTATION': False,
