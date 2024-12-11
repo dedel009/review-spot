@@ -47,6 +47,8 @@ ADDED_LIBRARY_APPS = [
     'drf_yasg',
     # cors 관련
     'corsheaders',
+    # 디버그 툴바
+    'debug_toolbar',
 ]
 
 DJANGO_APPS = [
@@ -59,7 +61,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-INSTALLED_APPS = CUSTOM_APPS + ADDED_LIBRARY_APPS + DJANGO_APPS
+INSTALLED_APPS = DJANGO_APPS + ADDED_LIBRARY_APPS + CUSTOM_APPS
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # 가장 위에 추가
@@ -71,6 +73,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# 디버그모드일 경우
+# 디버그 툴바 미들웨어 추가
+if DEBUG:
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]
+
 
 ROOT_URLCONF = 'review_spot_backend.urls'
 
@@ -226,3 +236,8 @@ sentry_sdk.init(
     # 릴리스 버전 설정
     release='review_spot_20241121_first_init',
 )
+
+# debug toolbar는 IP 주소가 django의 INTERNAL_IPS 설정에 등록되어 있어야 표시
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
