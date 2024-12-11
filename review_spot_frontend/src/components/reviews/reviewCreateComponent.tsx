@@ -32,7 +32,6 @@ const fruitAromas = [
   "사과",
   "복숭아",
   "체리",
-  "자두",
   "딸기",
   "블랙 커런트",
   "블랙베리",
@@ -130,7 +129,7 @@ export default function ReviewCreateComponent() {
     content: "",
     aromaProfile: {
       labels: [],
-      data: [],
+      scores: [] as number[],
     },
   });
 
@@ -149,7 +148,7 @@ export default function ReviewCreateComponent() {
 
     setReview((prevReview) => ({
       ...prevReview,
-      productId: selectedProductId, // 제품 ID를 폼 데이터에 추가
+      product_id: selectedProductId, // 제품 ID를 폼 데이터에 추가
     }));
     console.log("선택한 제품 ID:", selectedProductId);
   };
@@ -164,49 +163,47 @@ export default function ReviewCreateComponent() {
 
   const handleAromaChange = (index: number, value: number) => {
     setReview((prevReview) => {
-      const newAromaData = [...(prevReview.aromaProfile?.data || [])];
+      const newAromaData = [...(prevReview.aromaProfile?.scores || [])];
       newAromaData[index] = value;
 
       return {
         ...prevReview,
         aromaProfile: {
           ...prevReview.aromaProfile,
-          data: newAromaData,
+          scores: newAromaData,
         },
       };
     });
   };
 
   const handleAromaCheckboxChange = (label: string, checked: boolean) => {
-    if (checked) {
-      if ((review.aromaProfile?.labels || []).length >= 10) {
-        alert("최대 10개의 아로마만 선택할 수 있습니다.");
-        return;
+    setReview((prevReview) => {
+      let newLabels = [...prevReview.aromaProfile.labels];
+      let newScores = [...prevReview.aromaProfile.scores]; // 'scores'로 변경
+
+      if (checked) {
+        if (newLabels.length >= 10) {
+          alert("최대 10개의 아로마만 선택할 수 있습니다.");
+          return prevReview;
+        }
+        newLabels.push(label);
+        newScores.push(0); // 새로운 아로마 항목 추가 시 기본 점수는 0
+      } else {
+        const index = newLabels.indexOf(label);
+        if (index > -1) {
+          newLabels.splice(index, 1);
+          newScores.splice(index, 1); // 해당 아로마와 그 점수 제거
+        }
       }
 
-      setReview((prevReview) => ({
+      return {
         ...prevReview,
         aromaProfile: {
-          labels: [...(prevReview.aromaProfile?.labels || []), label],
-          data: [...(prevReview.aromaProfile?.data || []), 0],
+          labels: newLabels,
+          scores: newScores, // 'scores'로 변경
         },
-      }));
-    } else {
-      setReview((prevReview) => {
-        const index = prevReview.aromaProfile?.labels.indexOf(label) || 0;
-        const newLabels = [...(prevReview.aromaProfile?.labels || [])];
-        const newData = [...(prevReview.aromaProfile?.data || [])];
-        newLabels.splice(index, 1);
-        newData.splice(index, 1);
-        return {
-          ...prevReview,
-          aromaProfile: {
-            labels: newLabels,
-            data: newData,
-          },
-        };
-      });
-    }
+      };
+    });
   };
 
   const radarChartData = {
@@ -214,7 +211,7 @@ export default function ReviewCreateComponent() {
     datasets: [
       {
         label: "Aroma Profile",
-        data: review.aromaProfile?.data || [],
+        data: review.aromaProfile?.scores || [],
         backgroundColor: "rgba(34, 202, 236, .2)",
         borderColor: "rgba(34, 202, 236, 1)",
         pointBackgroundColor: "rgba(34, 202, 236, 1)",
@@ -222,10 +219,28 @@ export default function ReviewCreateComponent() {
     ],
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // API로 리뷰 데이터를 전송하는 함수
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // 여기서 리뷰 데이터를 서버로 전송하거나 상태로 관리합니다.
-    console.log("리뷰 데이터:", review);
+
+    try {
+      const response = await fetch("/api/reviews/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(review), // 리뷰 데이터를 JSON 형식으로 변환하여 전송
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("리뷰 제출 성공:", data);
+      } else {
+        console.error("리뷰 제출 실패:", response.status);
+      }
+    } catch (error) {
+      console.error("리뷰 제출 중 오류 발생:", error);
+    }
   };
 
   return (
@@ -251,7 +266,7 @@ export default function ReviewCreateComponent() {
             제품명
           </label>
           <select
-            name="productId"
+            name="product_id"
             value={review.productId || 0}
             onChange={handleProductChange}
             className="mt-1 p-2 w-full border rounded"
@@ -274,7 +289,7 @@ export default function ReviewCreateComponent() {
           </label>
           <input
             type="number"
-            name="noseScore"
+            name="nose_score"
             value={review.noseScore || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
@@ -290,7 +305,7 @@ export default function ReviewCreateComponent() {
           </label>
           <input
             type="number"
-            name="palateScore"
+            name="palate_score"
             value={review.palateScore || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
@@ -306,7 +321,7 @@ export default function ReviewCreateComponent() {
           </label>
           <input
             type="number"
-            name="finishScore"
+            name="finish_score"
             value={review.finishScore || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
@@ -446,12 +461,12 @@ export default function ReviewCreateComponent() {
           {review.aromaProfile?.labels.map((label, index) => (
             <div key={label} className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
-                {label} 점수: {review.aromaProfile?.data[index] || 0}
+                {label} 점수: {review.aromaProfile?.scores[index] || 0}
               </label>
               <input
                 type="range"
                 name={`aroma-${label}`}
-                value={review.aromaProfile?.data[index] || 0}
+                value={review.aromaProfile?.scores[index] || 0}
                 onChange={(e) =>
                   handleAromaChange(index, parseInt(e.target.value, 10))
                 }
@@ -463,6 +478,7 @@ export default function ReviewCreateComponent() {
           ))}
         </div>
 
+        {/* 여기에 기존 입력 필드 코드 추가 */}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white p-2 rounded mt-4 hover:bg-blue-600"

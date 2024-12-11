@@ -1,81 +1,78 @@
-import ReviewsListComponent from "@/components/reviews/reviewsListComponent";
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation"; // useSearchParams 추가
 import { ReviewItem } from "@/types/types";
+import ReviewsItemComponent from "@/components/reviews/reviewsItemComponent";
+import Pagination from "@/components/common/pagenationComponent";
 
-export default function Page() {
-  const items: ReviewItem[] = [
-    {
-      id: 1,
-      nickname: "nickname1",
-      avgScore: 85,
-      noseScore: 85,
-      palateScore: 85,
-      finishScore: 85,
-      content:
-        "Overall, there are no off-notes, and the note composition is excellent. First of all, the note composition of the nose is really good. On the palate, the medium to mild peatiness supports the main citrus note of orange. The elements that could have become off-notes if overdone are suppressed at just the right level, making it feel quite complex. Although the strength of the palate/finish feels a bit lacking considering the high ABV, this seems to be almost the best performance possible given the age and specifications.",
-      createdAt: "2021-09-01 00:00:00",
-      product: {
-        name: "스프링뱅크 10",
-        imgPath: "/temp/스뱅.webp",
-        alcohol: 46,
-        capacity: 700,
-        area: "캠밸타운",
-        category: "싱글몰트",
-      },
-      aromaProfile: {
-        labels: [
-          "Citrus",
-          "Tropical Fruits",
-          "Pome Fruits",
-          "Dried Fruits",
-          "Vanilla",
-          "Honey",
-          "Smoke",
-          "Peat",
-          "Nutty",
-          "Malt",
-        ],
-        data: [10, 20, 15, 25, 30, 35, 40, 25, 20, 100],
-      },
-    },
-    {
-      id: 2,
-      nickname: "nickname2",
-      avgScore: 85,
-      noseScore: 85,
-      palateScore: 85,
-      finishScore: 85,
-      content:
-        "Overall, there are no off-notes, and the note composition is excellent. First of all, the note composition of the nose is really good. On the palate, the medium to mild peatiness supports the main citrus note of orange. The elements that could have become off-notes if overdone are suppressed at just the right level, making it feel quite complex. Although the strength of the palate/finish feels a bit lacking considering the high ABV, this seems to be almost the best performance possible given the age and specifications.",
-      createdAt: "2021-09-01 00:00:00",
-      product: {
-        name: "와일드터키 레어브리드",
-        imgPath: "/temp/레어브리드.webp",
-        alcohol: 58.4,
-        capacity: 750,
-        area: "켄터키",
-        category: "버번",
-      },
-      aromaProfile: {
-        labels: [
-          "Citrus",
-          "Tropical Fruits",
-          "Pome Fruits",
-          "Dried Fruits",
-          "Vanilla",
-          "Honey",
-          "Smoke",
-          "Peat",
-          "Nutty",
-          "Malt",
-        ],
-        data: [12, 18, 22, 28, 32, 38, 35, 30, 25, 20],
-      },
-    },
-  ];
+export default function ReviewsPage() {
+  const [items, setItems] = useState<ReviewItem[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10; // 페이지당 보여줄 항목 수
+
+  const router = useRouter();
+  const searchParams = useSearchParams(); // URL의 쿼리 파라미터를 가져옴
+
+  // searchParams로부터 page 쿼리 파라미터를 가져오고, 없으면 1로 설정
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+
+  // 페이지 변경에 따른 데이터 가져오기
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(
+          `/api/reviews/get_list?pageNum=${currentPage}&display=${itemsPerPage}`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          console.log("Fetched reviews:", data);
+          if (data && Array.isArray(data.data)) {
+            setItems(data.data);
+            setTotalItems(data.total_item);
+          } else {
+            console.error("API 응답 데이터 형식이 올바르지 않습니다.");
+          }
+        } else {
+          console.error("API 요청 실패:", res.status);
+        }
+      } catch (error) {
+        console.error("데이터를 가져오는 중 오류 발생:", error);
+      }
+    };
+
+    fetchReviews();
+  }, [currentPage]); // currentPage가 변경될 때마다 API 호출
+
+  // 페이지네이션 핸들러 (페이지 변경 시 URL을 업데이트하고 상태도 변경)
+  const handlePageChange = (newPage: number) => {
+    router.push(`/reviews?page=${newPage}`); // URL을 동기화하여 페이지 번호 반영
+  };
+
   return (
     <main className="container-xl">
       <section className="p-8 flex flex-col space-y-20">
-        <ReviewsListComponent items={items} />
+        {items.length === 0 ? (
+          <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
+            <h2 className="text-2xl font-bold text-gray-800">
+              No reviews found
+            </h2>
+          </div>
+        ) : (
+          <div className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
+            <article className="w-full h-full flex flex-col justify-center items-center mx-auto p-4">
+              {items.map((item) => (
+                <ReviewsItemComponent key={item.id} item={item} />
+              ))}
+            </article>
+            <Pagination
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
+              paginate={handlePageChange} // handlePageChange를 paginate로 전달
+              currentPage={currentPage}
+            />
+          </div>
+        )}
       </section>
     </main>
   );
