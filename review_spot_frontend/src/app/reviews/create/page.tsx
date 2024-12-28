@@ -1,4 +1,4 @@
-import ReviewCreateComponent from "@/components/reviews/ReviewCreateComponent";
+import ReviewCreateComponent from "@/components/reviews/reviewCreateComponent";
 
 export default function Page() {
   return (
