@@ -14,12 +14,18 @@ export default function Page() {
         "Overall, there are no off-notes, and the note composition is excellent. First of all, the note composition of the nose is really good. On the palate, the medium to mild peatiness supports the main citrus note of orange. The elements that could have become off-notes if overdone are suppressed at just the right level, making it feel quite complex. Although the strength of the palate/finish feels a bit lacking considering the high ABV, this seems to be almost the best performance possible given the age and specifications.",
       createdAt: "2021-09-01 00:00:00",
       product: {
-        name: "스프링뱅크 10",
-        imgPath: "/temp/스뱅.webp",
+        product_id: 2,
+        product_name: "스프링뱅크 10",
+        img_path: "/temp/스뱅.webp",
         alcohol: 46,
         capacity: 700,
         area: "캠밸타운",
-        category: "싱글몰트",
+        category: {
+          id: 1,
+          name: "싱글몬트",
+          created: "ㅅㄷㄴㅅ",
+          updated: "test",
+        },
       },
       aromaProfile: {
         labels: [
@@ -48,12 +54,18 @@ export default function Page() {
         "Overall, there are no off-notes, and the note composition is excellent. First of all, the note composition of the nose is really good. On the palate, the medium to mild peatiness supports the main citrus note of orange. The elements that could have become off-notes if overdone are suppressed at just the right level, making it feel quite complex. Although the strength of the palate/finish feels a bit lacking considering the high ABV, this seems to be almost the best performance possible given the age and specifications.",
       createdAt: "2021-09-01 00:00:00",
       product: {
-        name: "와일드터키 레어브리드",
-        imgPath: "/temp/레어브리드.webp",
+        product_id: 1,
+        product_name: "와일드터키 레어브리드",
+        img_path: "/temp/레어브리드.webp",
         alcohol: 58.4,
         capacity: 750,
         area: "켄터키",
-        category: "버번",
+        category: {
+          id: 2,
+          name: "싱글몬트",
+          created: "ㅅㄷㄴㅅ",
+          updated: "test",
+        },
       },
       aromaProfile: {
         labels: [
