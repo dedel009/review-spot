@@ -28,9 +28,9 @@ export interface ProductInfo {
   capacity: number;
   alcohol: number;
   area: string;
-  distillery: string // 증류소
-  bottler: string // 병입업자
-  bottling_serie: string // 병입 시리즈
-  bottled: string // 병입년도
-  cask_type: string // 오크통 유형
+  distillery: string; // 증류소
+  bottler: string; // 병입업자
+  bottling_serie: string; // 병입 시리즈
+  bottled: string; // 병입년도
+  cask_type: string; // 오크통 유형
 }
