@@ -49,7 +49,7 @@ export default function ReviewsItemComponent({
     labels: aromaProfile.labels,
     datasets: [
       {
-        label: `${product.name} Aroma Profile`,
+        label: `${product.product_name} Aroma Profile`,
         data: aromaProfile.data,
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
@@ -63,7 +63,7 @@ export default function ReviewsItemComponent({
       <div className="flex flex-col md:flex-row space-x-4 w-full h-full">
         {/* 왼쪽 영역 */}
         <div className="flex flex-col basis-3/4 justify-start items-center bg-white w-full h-full">
-          <h1>{`${nickname}님이 ${product.name}에 대해서 ${avgScore}를 주었습니다.`}</h1>
+          <h1>{`${nickname}님이 ${product.product_name}에 대해서 ${avgScore}를 주었습니다.`}</h1>
           <p className="text-gray-300">{`${createdAt}`}</p>
           <div className="flex flex-col md:flex-row justify-center items-start p-4">
             <p className="basis-2/3">{content}</p>
@@ -83,8 +83,8 @@ export default function ReviewsItemComponent({
           <div className="flex basis-1/4 bg-white w-full ">
             <div className="flex justify-center items-center w-full ">
               <Image
-                src={product.imgPath}
-                alt={product.name}
+                src={product.img_path}
+                alt={product.product_name}
                 width={300}
                 height={300}
               />
