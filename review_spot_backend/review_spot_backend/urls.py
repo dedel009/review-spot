@@ -14,12 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import mimetypes
+import os
+
 from django.contrib import admin
 from django.urls import path, include
 # swagger 설정
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
 
 # swagger 설정
 schema_view = get_schema_view(
@@ -52,6 +56,20 @@ urlpatterns = [
     # 제품 url
     path('api/products/', include('product.urls')),
     # 리뷰 url
-    path('api/reviews/', include('review.urls')),
+    path('api/reviews', include('review.urls')),
+    # 인증 url
+    path('api/', include('user.urls')),
 
 ]
+
+env = os.environ.get('DJANGO_ENV', 'development')
+print("env :::", env)
+if env == 'development':
+    mimetypes.add_type('application/javascript', '.js', True)
+    if settings.DEBUG:
+        print("debug mode is on. Debug Toolbar is included.")
+        import debug_toolbar
+        urlpatterns += [
+            path('__debug__/', include(debug_toolbar.urls))
+        ]
+

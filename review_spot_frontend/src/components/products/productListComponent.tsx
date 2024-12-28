@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Pagination from "../common/pagenationComponent";
 import { Product } from "@/types/types";
+import { getProducts } from "@/app/api/products/products";
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,14 +23,8 @@ export default function ProductList() {
       if (category) params.category_id = category;
       params.sort = sort;
 
-      const queryString = new URLSearchParams(params).toString();
-      console.log("queryString", queryString);
-
-      const res = await fetch(`/lib/products?${queryString}`);
-      if (!res.ok) throw new Error("Failed to fetch");
-
-      const result = await res.json();
-      setProducts(result.data);
+      const res = await getProducts(params);
+      setProducts(res);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     }
@@ -100,7 +95,7 @@ export default function ProductList() {
                 </div>
                 <div className="w-full h-full py-5 flex flex-col justify-between items-start">
                   <div className="flex">
-                    <p className="px-5 text-left text-3xl flex-grow">
+                    <p className="px-5 text-left text-2xl flex-grow">
                       {product.product_name}
                     </p>
                   </div>

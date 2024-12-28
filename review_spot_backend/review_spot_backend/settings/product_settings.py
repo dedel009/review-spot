@@ -9,133 +9,20 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import os
-from pathlib import Path
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+from .base_settings import *
+from corsheaders.defaults import default_headers, default_methods
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-uy9%z=-$m$(pn$rz6=7mryg9hf#(o^&e9pke8zpskrtr5d6c0u'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    '3.39.234.40',
     '34.123.47.125',
     '127.0.0.1',
     'localhost',
+    'https://review-spot.vercel.app/',
+    'http://localhost:3000',
 ]
-
-
-# Application definition
-CUSTOM_APPS = [
-    # 사용자가 추가한 애플리케이션
-    'product',
-    'category',
-    'review',
-    'common',
-]
-
-ADDED_LIBRARY_APPS = [
-    # 사용자가 추가한 라이브러리
-    'rest_framework',
-    'drf_yasg',
-    # cors 관련
-    'corsheaders',
-]
-
-DJANGO_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-]
-
-INSTALLED_APPS = CUSTOM_APPS + ADDED_LIBRARY_APPS + DJANGO_APPS
-
-MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # 가장 위에 추가
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-ROOT_URLCONF = 'review_spot_backend.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = 'review_spot_backend.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'review_spot_main',
-        'USER': 'developer',
-        'PASSWORD': 'reviewspot',
-        'HOST': '35.232.134.75',
-        'PORT': '5432',
-    }
-}
-
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
-LANGUAGE_CODE = 'ko-KR'
-
-TIME_ZONE = 'Asia/Seoul'
-
-USE_I18N = True
-
-USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -144,20 +31,43 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 # CORS 설정
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
+    'http://3.39.234.40',
     'http://34.123.47.125',
     'http://127.0.0.1',
     'http://localhost',
+    'https://review-spot.vercel.app',
+    'http://localhost:3000',
 ]
 
-# http이기 때문에
-# CORS 헤더를 비활성화
-# 추후 ssl을 nginx에 설치 후 https 요청으로
-# 변경하면 제거하기
-SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'review_spot_main',
+        'USER': 'developer',
+        'PASSWORD': 'reviewspot',
+        'HOST': 'postgresql-db',
+        'PORT': '5432',
+    }
+}
+
+CORS_ALLOW_METHODS = list(default_methods)
+
+CORS_ALLOW_HEADERS = list(default_headers)
+
+sentry_sdk.init(
+    dsn="https://e41547dd9fff77e3a196f283fa052b01@o4508335294119936.ingest.us.sentry.io/4508335295234048",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+    environment='production',
+)

@@ -2,9 +2,13 @@
 
 ![readme_mockup2](https://github.com/dedel009/review-spot/blob/master/title_image.jpg?raw=true)
 
-- 배포 URL :
-- Test ID :
-- Test PW :
+- 배포
+  - 프론트 URL : https://review-spot.vercel.app/reviews
+  - 백엔드 swagger URL : https://34.123.47.125/swagger/
+  - 백엔드 admin URL : https://34.123.47.125/admin/
+- 협업 툴
+  - 노션 URL : https://www.notion.so/Review-Spot-09666bbf65314932b8f01f0c960cbf2a
+    
 
 <br>
 
@@ -32,9 +36,9 @@
 - Front : Next 14.2.5, React ^18, Typescript ^5, Node ^20
 - Back-end : Django 5.0.7, Python 3.12.3
 - 버전 및 이슈관리 : Github, Github Issues, Github Project
-- 협업 툴 : Notion, Github Wiki, Google Meet
+- 협업 툴 : Notion, gather
 - IDE : Pycharm, vsCode
-- 서비스 배포 환경 : AWS(예정)
+- 서비스 배포 환경 : GCP를 사용한 ubuntu 서버(nginx, gunicorn, django) / 무료 기간 만료로 인해 AWS 클라우드 서버로 이전(도커 컴포즈를 이용해 환경세팅)
   <br>
 
 ## 2. 채택한 개발 기술과 브랜치 전략
@@ -80,7 +84,7 @@
 ```
 ├── README.md
 └── review_spot_frontend
-     ├──
+     ├──...
 └── review_spot_backend
      ├── ...
 
@@ -93,7 +97,7 @@
 ### 🍀김도윤(Backend Developer)
 
 - **기능**
-  - 유저 검색, 게시글 등록 및 수정, 게시글 상세 확인, 댓글 등록, 팔로워 게시글 불러오기, 좋아요 기능
+  - 전체적인 백엔드 API 개발 및 아키텍처 설계, 배포 서버 구축 등
 
 <br>
     

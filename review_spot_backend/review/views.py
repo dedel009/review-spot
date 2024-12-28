@@ -1,16 +1,28 @@
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.serializer import CommonListRequestSerializer
+from product.models import Product
 from review.serializer import ReivewListResponseSerializer, CreateReviewRequestSerializer
 
 
 # 리뷰 작성 및 리스트 조회 API
 class ReviewAPIView(APIView):
+
+    # HTTP 요청이 들어올 때 호출되는 메서드
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            # POST 요청에 대해서만 JWT 인증과 권한 검사 적용
+            from common.authentication import CustomJWTAuthentication
+            self.authentication_classes = [CustomJWTAuthentication]
+            self.permission_classes = [IsAuthenticated]
+
+        # 부모 클래스의 dispatch 메서드를 호출하여 적절한 핸들러로 요청을 전달
+        return super().dispatch(request, *args, **kwargs)
 
     @swagger_auto_schema(
         query_serializer=CommonListRequestSerializer,
@@ -28,7 +40,7 @@ class ReviewAPIView(APIView):
         # 검색어
         query_params = request_serializer.validated_data.get('query', '')
         # 카테고리
-        category_params = request_serializer.validated_data.get('category', '')
+        category_id = request_serializer.validated_data.get('category_id', 0)
         # 정렬 방법
         sort = request_serializer.validated_data.get('sort', 'created')
 
@@ -44,9 +56,9 @@ class ReviewAPIView(APIView):
             )
 
         # 카테고리 필터
-        if category_params:
+        if category_id:
             review_queryset = review_queryset.filter(
-                Q(product__category__name__iexact=category_params)
+                Q(product__category_id=category_id)
             )
 
         # 정렬 처리
@@ -77,13 +89,15 @@ class ReviewAPIView(APIView):
         operation_description="리뷰 작성 API",
     )
     def post(self, reqeust: Request, *args, **kwargs):
+
         request_serializer = CreateReviewRequestSerializer(data=reqeust.data)
         request_serializer.is_valid(raise_exception=True)
         print("request_serializer :::", request_serializer.data)
 
+        product_id = request_serializer.validated_data.get('product_id', 0)
+
         # 생성 파라미터
         create_params = {
-            'product_id': request_serializer.validated_data.get('product_id', 0),
             'nickname': request_serializer.validated_data.get('nickname', ''),
             'content': request_serializer.validated_data.get('content', ''),
             'review_score_info': {
@@ -94,14 +108,18 @@ class ReviewAPIView(APIView):
             'aroma_profile': request_serializer.validated_data.get('aroma_profile', dict),
         }
 
-        # 리뷰 데이터 생성
-        from review.models import Review
-        Review.objects.create(**create_params)
-
-        return Response({
-            'success': True,
-            'message': '성공',
-            'data': None,
-        })
-
-
+        # 상품 데이터 유효성 검증
+        from common.utils import CustomResponse
+        try:
+            product = Product.objects.filter(id=product_id)
+            if product.exists():
+                create_params['product'] = product.first()
+                # 리뷰 데이터 생성
+                from review.models import Review
+                Review.objects.create(**create_params)
+                return CustomResponse(code='CODE_0000')
+            else:
+                return CustomResponse(code='CODE_0001')
+        except Exception as e:
+            print(f'예기치 못한 에러명 : {e}')
+            return CustomResponse(code='CODE_0002')
