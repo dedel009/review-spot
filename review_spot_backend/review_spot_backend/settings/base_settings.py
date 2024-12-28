@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+import sentry_sdk
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -46,6 +47,8 @@ ADDED_LIBRARY_APPS = [
     'drf_yasg',
     # cors 관련
     'corsheaders',
+    # 디버그 툴바
+    'debug_toolbar',
 ]
 
 DJANGO_APPS = [
@@ -58,7 +61,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-INSTALLED_APPS = CUSTOM_APPS + ADDED_LIBRARY_APPS + DJANGO_APPS
+INSTALLED_APPS = DJANGO_APPS + ADDED_LIBRARY_APPS + CUSTOM_APPS
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # 가장 위에 추가
@@ -70,6 +73,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# 디버그모드일 경우
+# 디버그 툴바 미들웨어 추가
+if DEBUG:
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]
+
 
 ROOT_URLCONF = 'review_spot_backend.urls'
 
@@ -101,10 +112,9 @@ DATABASES = {
         'NAME': 'review_spot_main',
         'USER': 'developer',
         'PASSWORD': 'reviewspot',
-        'HOST': '104.198.25.213',
+        'HOST': '3.39.234.40',
         'PORT': '5432',
     }
-
 }
 
 
@@ -211,3 +221,24 @@ SWAGGER_SETTINGS = {
     },
     'USE_SESSION_AUTH': False,  # 세션 인증 비활성화 (JWT를 사용하므로)
 }
+
+sentry_sdk.init(
+    dsn="https://e41547dd9fff77e3a196f283fa052b01@o4508335294119936.ingest.us.sentry.io/4508335295234048",
+    # 성능 모니터링을 위한 샘플링 비율(0.0 ~ 1.0)을 설정
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+    # 환경 설정
+    environment='development',
+    # 릴리스 버전 설정
+    release='review_spot_20241121_first_init',
+)
+
+# debug toolbar는 IP 주소가 django의 INTERNAL_IPS 설정에 등록되어 있어야 표시
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
