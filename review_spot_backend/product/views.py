@@ -35,6 +35,8 @@ class ProductListApiView(APIView):
         from product.models import Product
         product_qs = Product.objects.filter(
             is_active=True,
+        ).select_related(
+            'category'
         )
 
         # 검색어로 상품명 필터링
