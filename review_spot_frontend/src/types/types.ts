@@ -37,7 +37,7 @@ export interface ProductInfo {
 // 아로마 프로필 타입
 export interface AromaProfile {
   labels: string[];
-  scores: number[];
+  data: number[];
 }
 
 // 리뷰 타입

@@ -17,7 +17,7 @@ export default function ReviewsItemComponent({
     palateScore,
     finishScore,
     content,
-    // created_at,
+    createdAt,
     product,
     aromaProfile, // aromaProfile를 받아서 사용
   } = item;
@@ -46,11 +46,11 @@ export default function ReviewsItemComponent({
 
   // 레이더 차트 데이터는 aromaProfile로부터 직접 가져옵니다.
   const radarChartData = {
-    labels: aromaProfile?.labels || [], // aroma_profile이 없으면 빈 배열로 대체
+    labels: aromaProfile.labels,
     datasets: [
       {
         label: `${product.product_name} Aroma Profile`,
-        data: aromaProfile?.scores || [], // aroma_profile이 없으면 빈 배열로 대체
+        data: aromaProfile.data,
 
         backgroundColor: "rgba(54, 162, 235, 0.2)",
         borderColor: "rgba(54, 162, 235, 1)",
@@ -65,7 +65,7 @@ export default function ReviewsItemComponent({
         {/* 왼쪽 영역 */}
         <div className="flex flex-col basis-3/4 justify-start items-center bg-white w-full h-full">
           <h1>{`${nickname}님이 ${product.product_name}에 대해서 ${avgScore}를 주었습니다.`}</h1>
-          {/* <p className="text-gray-300">{`${created_at}`}</p> */}
+          <p className="text-gray-300">{`${createdAt}`}</p>
           <div className="flex flex-col md:flex-row justify-center items-start p-4">
             <p className="basis-2/3">{content}</p>
             <div className="flex basis-1/3 flex-col justify-center items-center w-full h-full">
@@ -83,17 +83,12 @@ export default function ReviewsItemComponent({
         <Link href={`/reviews/${item.id}`}>
           <div className="flex basis-1/4 bg-white w-full ">
             <div className="flex justify-center items-center w-full ">
-              {product.img_path ? (
-                <Image
-                  src={product.img_path} // 이미지 경로
-                  alt={product.product_name} // 대체 텍스트
-                  width={200} // 너비
-                  height={200} // 높이
-                />
-              ) : (
-                <div className="w-32 h-32 bg-gray-300"></div>
-              )}
-
+              <Image
+                src={product.img_path}
+                alt={product.product_name}
+                width={300}
+                height={300}
+              />
               <div className="flex flex-col justify-center items-center">
                 <p>{`Alcohol: ${product.alcohol}%`}</p>
                 <p>{`Capacity: ${product.capacity}ml`}</p>

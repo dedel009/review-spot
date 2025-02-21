@@ -1,13 +1,20 @@
+from http import HTTPStatus
+
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.request import Request
+from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 
 from common.utils import CustomResponse
 from user.serializers import LoginRequestSerializer, TokenRefreshRequestSerializer, LoginResponseSerializer, \
-    TokenRefreshResponseSerializer
+    TokenRefreshResponseSerializer, DuplicationUserIdRequestSerializer, DuplicationUserIdResponseSerializer, \
+    UserSignUpAPIRequestSerializer
 
 
 class CustomLoginAPIView(APIView):
@@ -17,7 +24,9 @@ class CustomLoginAPIView(APIView):
 
     @swagger_auto_schema(
         request_body=LoginRequestSerializer,
-        responses={200: LoginResponseSerializer},
+        responses={
+            200: openapi.Response('로그인 성공', LoginResponseSerializer),
+        },
         operation_description="로그인 API",
     )
     def post(self, request: Request):
@@ -64,7 +73,9 @@ class TokenRefreshAPIView(APIView):
 
     @swagger_auto_schema(
         request_body=TokenRefreshRequestSerializer,
-        responses={200: TokenRefreshResponseSerializer},
+        responses={
+            200: openapi.Response('토큰 재발급 성공', TokenRefreshResponseSerializer),
+        },
         operation_description="토큰 재발급 API",
     )
     def post(self, request, *args, **kwargs):
@@ -91,4 +102,88 @@ class UserSignUpAPIView(APIView):
     """
     유저 회원가입 API
     """
+    @swagger_auto_schema(
+        request_body=UserSignUpAPIRequestSerializer,
+        responses={
+            200: openapi.Response('유저 회원 가입 성공'),
+        },
+        operation_description="회원 가입 API",
+    )
+    def post(self, request):
+        # 요청 시리얼라이저로 쿼리 파라미터를 검증
+        request_serializer = UserSignUpAPIRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
 
+        user_id = request_serializer.validated_data.get('user_id')
+        password = request_serializer.validated_data.get('password')
+        name = request_serializer.validated_data.get('name')
+        email = request_serializer.validated_data.get('email')
+        nickname = request_serializer.validated_data.get('nickname')
+
+        from user.models import CustomUser
+        try:
+            CustomUser.objects.create_user(
+                username=user_id,
+                password=password,
+                name=name,
+                email=email if email else None,
+                nickname=nickname if nickname else None,
+            )
+        except IntegrityError as e:
+            # 예: 사용자 이름이 중복될 때 발생
+            # 예외 처리 로직 추가
+            print(f"데이터베이스 에러: {e}")
+        except ValidationError as e:
+            # 예: 입력값 유효성 검사 실패 시 발생
+            print(f"유효성 검사 에러: {e}")
+        except Exception as e:
+            # 그 외의 예상치 못한 예외 처리
+            print(f"예상치 못한 에러: {e}")
+
+        return CustomResponse(code="CODE_0009")
+
+
+class DuplicationUserIdView(APIView):
+    """
+    아이디 중복 체크 API
+    """
+    @swagger_auto_schema(
+        request_body=DuplicationUserIdRequestSerializer,
+        responses={
+            200: openapi.Response('유저 ID 중복 체크 성공', DuplicationUserIdResponseSerializer),
+        },
+        operation_description="유저 ID 중복 체크 API",
+    )
+    def post(self, request):
+        # 요청 시리얼라이저로 쿼리 파라미터를 검증
+        request_serializer = DuplicationUserIdRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        # 유저 ID
+        user_id = request_serializer.validated_data.get('user_id')
+
+        from user.models import CustomUser
+        user_qs = CustomUser.objects.filter(
+            username=user_id,
+            is_active=True,
+        )
+
+        # 해당하는 유저가 없을 경우
+        if not user_qs.exists():
+            return CustomResponse(
+                data=DuplicationUserIdResponseSerializer(
+                    instance={
+                        'duplication_check_flag':False
+                    }
+                ).data,
+                code="CODE_0007"
+            )
+        else:
+            return CustomResponse(
+                data=DuplicationUserIdResponseSerializer(
+                    instance={
+                        'duplication_check_flag':True
+                    }
+                ).data,
+                code="CODE_0008"
+            )

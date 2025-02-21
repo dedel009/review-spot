@@ -51,6 +51,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),  # Django REST Framework의 기본 API 뷰를 설정
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('silk/', include('silk.urls', namespace='silk')),
 
     # 사용자가 추가한 앱 url
     # 제품 url
