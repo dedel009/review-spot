@@ -55,6 +55,12 @@ def GetCustomCode(code):
         return "리프레시 토큰이 제공되지 않았습니다."
     elif code == 'CODE_0006':
         return "유효하지 않은 리프레시 토큰입니다."
+    elif code == 'CODE_0007':
+        return "중복된 아이디가 없습니다."
+    elif code == 'CODE_0008':
+        return "중복된 아이디입니다."
+    elif code == 'CODE_0009':
+        return "정상적으로 회원가입이 완료되었습니다."
 
 
 

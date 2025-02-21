@@ -40,11 +40,13 @@ class CustomUser(AbstractBaseUser):
     nickname = models.CharField(
         max_length=30,
         blank=True,
-        verbose_name='유저 닉네임'
+        verbose_name='유저 닉네임',
+        null=True,
     )
     email = models.EmailField(
         blank=True,
         verbose_name='유저 이메일',
+        null=True,
     )
     is_active = models.BooleanField(
         default=True,
