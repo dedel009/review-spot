@@ -71,6 +71,9 @@ class CreateReviewRequestSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(
         help_text='상품 ID'
     )
+    user_id = serializers.CharField(
+        help_text='유저 ID'
+    )
     nickname = serializers.CharField(
         help_text='리뷰 작성자 닉네임'
     )
@@ -94,6 +97,7 @@ class CreateReviewRequestSerializer(serializers.ModelSerializer):
         model = Review
         fields = [
             'product_id',
+            'user_id',
             'nickname',
             'nose_score',
             'palate_score',
