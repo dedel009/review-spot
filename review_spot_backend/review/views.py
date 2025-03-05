@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from common.serializer import CommonListRequestSerializer
 from product.models import Product
 from review.serializer import ReivewListResponseSerializer, CreateReviewRequestSerializer
+from user.models import CustomUser
 
 
 # 리뷰 작성 및 리스트 조회 API
@@ -25,7 +26,7 @@ class ReviewAPIView(APIView):
         return super().dispatch(request, *args, **kwargs)
 
     @swagger_auto_schema(
-        query_serializer=CommonListRequestSerializer,
+        query_serializer=CommonListRequestSerializer(),
         responses={200: ReivewListResponseSerializer(many=True)},
         operation_description="리뷰 리스트 조회 API",
     )
@@ -95,6 +96,7 @@ class ReviewAPIView(APIView):
         print("request_serializer :::", request_serializer.data)
 
         product_id = request_serializer.validated_data.get('product_id', 0)
+        user_id = request_serializer.validated_data.get('user_id')
 
         # 생성 파라미터
         create_params = {
@@ -111,9 +113,19 @@ class ReviewAPIView(APIView):
         # 상품 데이터 유효성 검증
         from common.utils import CustomResponse
         try:
-            product = Product.objects.filter(id=product_id)
-            if product.exists():
-                create_params['product'] = product.first()
+            product_qs = Product.objects.filter(
+                id=product_id,
+                is_active=True,
+            )
+
+            user_qs = CustomUser.objects.filter(
+                is_active=True,
+                username=user_id,
+            )
+
+            if all([product_qs.exists(), user_qs.exists()]):
+                create_params['product'] = product_qs.first()
+                create_params['user'] = user_qs.first()
                 # 리뷰 데이터 생성
                 from review.models import Review
                 Review.objects.create(**create_params)

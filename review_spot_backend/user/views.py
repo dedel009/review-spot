@@ -51,7 +51,7 @@ class CustomLoginAPIView(APIView):
         if not user_qs.exists():
             return CustomResponse(code='CODE_0001', status_code=status.HTTP_401_UNAUTHORIZED)
 
-        user_instance = user_qs.first()
+        user_instance: CustomUser = user_qs.first()
 
         # 비밀번호 검증
         if not user_instance.check_password(password):
@@ -59,6 +59,7 @@ class CustomLoginAPIView(APIView):
 
         # jwt 토큰 발급
         refresh_token = RefreshToken.for_user(user_instance)
+        refresh_token['username'] = user_instance.username
         token_params = {
             'refresh_token': str(refresh_token),
             'access_token': str(refresh_token.access_token)
