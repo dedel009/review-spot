@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ReviewItem, Product, ReviewFormData } from "@/types/types";
 import RadarChart from "../charts/radarChart";
+import { useSearchParams, useRouter } from "next/navigation";
+import toast, { Toaster } from 'react-hot-toast';
+
+interface ReviewCreateComponentProps {
+  productId?: number;
+}
 
 // 제품 옵션 데이터 (id와 name만 포함)
 const productOptions: { id: number; name: string }[] = [
@@ -120,19 +126,27 @@ const oakAromas = [
   "페드로 히메네즈",
 ];
 
-export default function ReviewCreateComponent() {
+export default function ReviewCreateComponent({ productId }: ReviewCreateComponentProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const productName = searchParams.get('product_name') || '제품을 선택하세요';
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [selectedAromaLabels, setSelectedAromaLabels] = useState<string[]>([]);
+
   const [review, setReview] = useState<ReviewFormData>({
-    productId: 0,
-    nickname: "",
-    noseScore: 0,
-    palateScore: 0,
-    finishScore: 0,
+    nose_score: 0,
+    palate_score: 0,
+    finish_score: 0,
     content: "",
-    aromaProfile: {
-      labels: [],
-      data: [],
-    },
+    aroma_labels: [],
+    aroma_scores: {},
   });
+
+  const calculateAverageScore = () => {
+    const { nose_score, palate_score, finish_score } = review;
+    return ((nose_score + palate_score + finish_score) / 3).toFixed(1);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -149,9 +163,8 @@ export default function ReviewCreateComponent() {
 
     setReview((prevReview) => ({
       ...prevReview,
-      productId: selectedProductId, // 제품 ID를 폼 데이터에 추가
+      product_id: selectedProductId,
     }));
-    console.log("선택한 제품 ID:", selectedProductId);
   };
 
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,59 +175,42 @@ export default function ReviewCreateComponent() {
     }));
   };
 
-  const handleAromaChange = (index: number, value: number) => {
-    setReview((prevReview) => {
-      const newAromaData = [...(prevReview.aromaProfile?.data || [])];
-      newAromaData[index] = value;
-
-      return {
-        ...prevReview,
-        aromaProfile: {
-          ...prevReview.aromaProfile,
-          data: newAromaData,
-        },
-      };
-    });
+  const handleAromaScoreChange = (label: string, value: number) => {
+    setReview(prev => ({
+      ...prev,
+      aroma_scores: {
+        ...prev.aroma_scores,
+        [label]: value
+      }
+    }));
   };
 
   const handleAromaCheckboxChange = (label: string, checked: boolean) => {
     if (checked) {
-      if ((review.aromaProfile?.labels || []).length >= 10) {
+      if (selectedAromaLabels.length >= 10) {
         alert("최대 10개의 아로마만 선택할 수 있습니다.");
         return;
       }
-
-      setReview((prevReview) => ({
-        ...prevReview,
-        aromaProfile: {
-          labels: [...(prevReview.aromaProfile?.labels || []), label],
-          data: [...(prevReview.aromaProfile?.data || []), 0],
-        },
-      }));
+      setSelectedAromaLabels(prev => [...prev, label]);
+      // 새로운 아로마가 선택되면 초기 점수를 50으로 설정
+      handleAromaScoreChange(label, 50);
     } else {
-      setReview((prevReview) => {
-        const index = prevReview.aromaProfile?.labels.indexOf(label) || 0;
-        const newLabels = [...(prevReview.aromaProfile?.labels || [])];
-        const newData = [...(prevReview.aromaProfile?.data || [])];
-        newLabels.splice(index, 1);
-        newData.splice(index, 1);
-        return {
-          ...prevReview,
-          aromaProfile: {
-            labels: newLabels,
-            data: newData,
-          },
-        };
+      setSelectedAromaLabels(prev => prev.filter(l => l !== label));
+      // 아로마가 제거되면 점수도 제거
+      setReview(prev => {
+        const newAromaScores = { ...prev.aroma_scores };
+        delete newAromaScores[label];
+        return { ...prev, aroma_scores: newAromaScores };
       });
     }
   };
 
   const radarChartData = {
-    labels: review.aromaProfile?.labels || [],
+    labels: selectedAromaLabels,
     datasets: [
       {
         label: "Aroma Profile",
-        data: review.aromaProfile?.data || [],
+        data: selectedAromaLabels.map(label => review.aroma_scores[label] || 0),
         backgroundColor: "rgba(34, 202, 236, .2)",
         borderColor: "rgba(34, 202, 236, 1)",
         pointBackgroundColor: "rgba(34, 202, 236, 1)",
@@ -222,50 +218,103 @@ export default function ReviewCreateComponent() {
     ],
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 여기서 리뷰 데이터를 서버로 전송하거나 상태로 관리합니다.
-    console.log("리뷰 데이터:", review);
+
+    const confirmMessage = `다음 내용으로 리뷰를 작성하시겠습니까?\n\n상품: ${productName}\n평균 점수: ${calculateAverageScore()}\n선택된 아로마: ${selectedAromaLabels.length}개`;
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          product_id: productId,
+          nose_score: review.nose_score,
+          palate_score: review.palate_score,
+          finish_score: review.finish_score,
+          content: review.content,
+          aroma_labels: selectedAromaLabels,
+          aroma_scores: review.aroma_scores,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          toast.error('로그인이 필요하거나 인증이 만료되었습니다.');
+          // setTimeout(() => {
+          //   router.replace('/login');
+          // }, 1500);
+          return;
+        }
+        const errorMessage = data.message || data.detail || '리뷰 작성 중 오류가 발생했습니다.';
+        setSubmitError(errorMessage);
+        toast.error(errorMessage);
+        return;
+      }
+
+      toast.success('리뷰가 성공적으로 작성되었습니다!');
+      setTimeout(() => {
+        router.push(`/productInfo/${productId}/4`);
+      }, 1500);
+
+    } catch (error) {
+      console.error('리뷰 작성 중 오류:', error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+      <Toaster position="top-center" />
       <h1 className="text-2xl font-bold mb-4">리뷰 작성</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            닉네임
-          </label>
-          <input
-            type="text"
-            name="nickname"
-            value={review.nickname || ""}
-            onChange={handleChange}
-            className="mt-1 p-2 w-full border rounded"
-            required
-          />
+      {submitError && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+          {submitError}
         </div>
-
+      )}
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
             제품명
           </label>
-          <select
-            name="productId"
-            value={review.productId || 0}
-            onChange={handleProductChange}
-            className="mt-1 p-2 w-full border rounded"
-            required
-          >
-            <option value="" disabled>
-              제품을 선택하세요
-            </option>
-            {productOptions.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
+          {productId ? (
+            <div className="mt-1 p-2 w-full border rounded bg-gray-50">
+              {decodeURIComponent(productName)}
+            </div>
+          ) : (
+            <select
+              name="product_id"
+              value={review.product_id || 0}
+              onChange={handleProductChange}
+              className="mt-1 p-2 w-full border rounded"
+              required
+            >
+              <option value={0} disabled>
+                제품을 선택하세요
               </option>
-            ))}
-          </select>
+              {productOptions.map((product) => (
+                <option key={product.id} value={product.id}>
+                  {product.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div>
@@ -274,8 +323,8 @@ export default function ReviewCreateComponent() {
           </label>
           <input
             type="number"
-            name="noseScore"
-            value={review.noseScore || 0}
+            name="nose_score"
+            value={review.nose_score || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -290,8 +339,8 @@ export default function ReviewCreateComponent() {
           </label>
           <input
             type="number"
-            name="palateScore"
-            value={review.palateScore || 0}
+            name="palate_score"
+            value={review.palate_score || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -306,8 +355,8 @@ export default function ReviewCreateComponent() {
           </label>
           <input
             type="number"
-            name="finishScore"
-            value={review.finishScore || 0}
+            name="finish_score"
+            value={review.finish_score || 0}
             onChange={handleScoreChange}
             className="mt-1 p-2 w-full border rounded"
             required
@@ -334,140 +383,207 @@ export default function ReviewCreateComponent() {
           <h2 className="text-lg font-semibold mb-2">아로마 선택</h2>
           <h3 className="text-sm font-semibold mb-2">과일향</h3>
           {fruitAromas.map((aroma) => (
-            <div key={aroma} className="mb-2">
-              <label className="inline-flex items-center">
+            <div key={aroma} className="mb-4">
+              <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={review.aromaProfile?.labels.includes(aroma) || false}
-                  onChange={(e) =>
-                    handleAromaCheckboxChange(aroma, e.target.checked)
-                  }
-                  className="form-checkbox"
+                  checked={selectedAromaLabels.includes(aroma)}
+                  onChange={(e) => handleAromaCheckboxChange(aroma, e.target.checked)}
+                  className="form-checkbox mr-2"
                 />
-                <span className="ml-2">{aroma}</span>
-              </label>
+                <span className="mr-4">{aroma}</span>
+              </div>
+              {selectedAromaLabels.includes(aroma) && (
+                <div className="ml-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={review.aroma_scores[aroma] || 0}
+                    onChange={(e) => handleAromaScoreChange(aroma, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>약함</span>
+                    <span>강함</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           <hr />
           <h3 className="text-sm font-semibold mb-2">꽃향</h3>
           {flowerAromas.map((aroma) => (
-            <div key={aroma} className="mb-2">
-              <label className="inline-flex items-center">
+            <div key={aroma} className="mb-4">
+              <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={review.aromaProfile?.labels.includes(aroma) || false}
-                  onChange={(e) =>
-                    handleAromaCheckboxChange(aroma, e.target.checked)
-                  }
-                  className="form-checkbox"
+                  checked={selectedAromaLabels.includes(aroma)}
+                  onChange={(e) => handleAromaCheckboxChange(aroma, e.target.checked)}
+                  className="form-checkbox mr-2"
                 />
-                <span className="ml-2">{aroma}</span>
-              </label>
+                <span className="mr-4">{aroma}</span>
+              </div>
+              {selectedAromaLabels.includes(aroma) && (
+                <div className="ml-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={review.aroma_scores[aroma] || 0}
+                    onChange={(e) => handleAromaScoreChange(aroma, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>약함</span>
+                    <span>강함</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           <hr />
           <h3 className="text-sm font-semibold mb-2">풀향</h3>
           {grassAromas.map((aroma) => (
-            <div key={aroma} className="mb-2">
-              <label className="inline-flex items-center">
+            <div key={aroma} className="mb-4">
+              <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={review.aromaProfile?.labels.includes(aroma) || false}
-                  onChange={(e) =>
-                    handleAromaCheckboxChange(aroma, e.target.checked)
-                  }
-                  className="form-checkbox"
+                  checked={selectedAromaLabels.includes(aroma)}
+                  onChange={(e) => handleAromaCheckboxChange(aroma, e.target.checked)}
+                  className="form-checkbox mr-2"
                 />
-                <span className="ml-2">{aroma}</span>
-              </label>
+                <span className="mr-4">{aroma}</span>
+              </div>
+              {selectedAromaLabels.includes(aroma) && (
+                <div className="ml-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={review.aroma_scores[aroma] || 0}
+                    onChange={(e) => handleAromaScoreChange(aroma, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>약함</span>
+                    <span>강함</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           <hr />
           <h3 className="text-sm font-semibold mb-2">이탄향</h3>
           {esterAromas.map((aroma) => (
-            <div key={aroma} className="mb-2">
-              <label className="inline-flex items-center">
+            <div key={aroma} className="mb-4">
+              <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={review.aromaProfile?.labels.includes(aroma) || false}
-                  onChange={(e) =>
-                    handleAromaCheckboxChange(aroma, e.target.checked)
-                  }
-                  className="form-checkbox"
+                  checked={selectedAromaLabels.includes(aroma)}
+                  onChange={(e) => handleAromaCheckboxChange(aroma, e.target.checked)}
+                  className="form-checkbox mr-2"
                 />
-                <span className="ml-2">{aroma}</span>
-              </label>
+                <span className="mr-4">{aroma}</span>
+              </div>
+              {selectedAromaLabels.includes(aroma) && (
+                <div className="ml-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={review.aroma_scores[aroma] || 0}
+                    onChange={(e) => handleAromaScoreChange(aroma, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>약함</span>
+                    <span>강함</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           <hr />
           <h3 className="text-sm font-semibold mb-2">곡물향</h3>
           {grainAromas.map((aroma) => (
-            <div key={aroma} className="mb-2">
-              <label className="inline-flex items-center">
+            <div key={aroma} className="mb-4">
+              <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={review.aromaProfile?.labels.includes(aroma) || false}
-                  onChange={(e) =>
-                    handleAromaCheckboxChange(aroma, e.target.checked)
-                  }
-                  className="form-checkbox"
+                  checked={selectedAromaLabels.includes(aroma)}
+                  onChange={(e) => handleAromaCheckboxChange(aroma, e.target.checked)}
+                  className="form-checkbox mr-2"
                 />
-                <span className="ml-2">{aroma}</span>
-              </label>
+                <span className="mr-4">{aroma}</span>
+              </div>
+              {selectedAromaLabels.includes(aroma) && (
+                <div className="ml-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={review.aroma_scores[aroma] || 0}
+                    onChange={(e) => handleAromaScoreChange(aroma, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>약함</span>
+                    <span>강함</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           <hr />
           <h3 className="text-sm font-semibold mb-2">오크향</h3>
           {oakAromas.map((aroma) => (
-            <div key={aroma} className="mb-2">
-              <label className="inline-flex items-center">
+            <div key={aroma} className="mb-4">
+              <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   value={aroma}
-                  checked={review.aromaProfile?.labels.includes(aroma) || false}
-                  onChange={(e) =>
-                    handleAromaCheckboxChange(aroma, e.target.checked)
-                  }
-                  className="form-checkbox"
+                  checked={selectedAromaLabels.includes(aroma)}
+                  onChange={(e) => handleAromaCheckboxChange(aroma, e.target.checked)}
+                  className="form-checkbox mr-2"
                 />
-                <span className="ml-2">{aroma}</span>
-              </label>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">아로마 프로필</h2>
-          {review.aromaProfile?.labels.map((label, index) => (
-            <div key={label} className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                {label} 점수: {review.aromaProfile?.data[index] || 0}
-              </label>
-              <input
-                type="range"
-                name={`aroma-${label}`}
-                value={review.aromaProfile?.data[index] || 0}
-                onChange={(e) =>
-                  handleAromaChange(index, parseInt(e.target.value, 10))
-                }
-                className="mt-1 w-full"
-                min={0}
-                max={100}
-              />
+                <span className="mr-4">{aroma}</span>
+              </div>
+              {selectedAromaLabels.includes(aroma) && (
+                <div className="ml-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={review.aroma_scores[aroma] || 0}
+                    onChange={(e) => handleAromaScoreChange(aroma, parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>약함</span>
+                    <span>강함</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded mt-4 hover:bg-blue-600"
+          disabled={isSubmitting}
+          className={`w-full p-2 rounded mt-4 ${
+            isSubmitting
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600 text-white'
+          }`}
         >
-          리뷰 제출
+          {isSubmitting ? '제출 중...' : '리뷰 제출'}
         </button>
       </form>
 

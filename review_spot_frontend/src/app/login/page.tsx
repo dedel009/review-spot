@@ -1,10 +1,10 @@
 "use client";
 
-import SignUpComponent from "@/components/sign/signUpComponent";
+import LoginComponent from "@/components/sign/loginComponent";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SignUpPage() {
+export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function SignUpPage() {
 
   return (
     <main className="container-xl">
-      <SignUpComponent />
+      <LoginComponent />
     </main>
   );
-}
+} 
