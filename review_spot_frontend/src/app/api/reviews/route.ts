@@ -21,81 +21,98 @@ export async function GET(request: NextRequest) {
 
         const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/reviews?${queryParams.toString()}`;
         
+        // AbortController를 사용하여 타임아웃 설정
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
 
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                signal: controller.signal
+            });
 
-        console.log('서버 응답 상태:', response.status);
+            clearTimeout(timeoutId); // 요청이 완료되면 타임아웃 취소
 
-        if (!response.ok) {
-            console.error('리뷰 목록 조회 실패:', response.status, response.statusText);
-            return NextResponse.json(
-                { message: '리뷰 목록을 불러오는데 실패했습니다.' },
-                { status: response.status }
-            );
-        }
+            console.log('서버 응답 상태:', response.status);
 
-        const data = await response.json();
-        console.log('서버 응답 데이터 전체:', data);
-        
-        if (data.data && data.data.length > 0) {
-            console.log('첫 번째 리뷰 데이터 상세:', JSON.stringify(data.data[0], null, 2));
-        }
+            if (!response.ok) {
+                console.error('리뷰 목록 조회 실패:', response.status, response.statusText);
+                return NextResponse.json(
+                    { message: '리뷰 목록을 불러오는데 실패했습니다.' },
+                    { status: response.status }
+                );
+            }
 
-        console.log('서버 응답 데이터:', {
-            success: data.success,
-            message: data.message,
-            totalCount: data.data?.length || 0
-        });
+            const data = await response.json();
+            console.log('서버 응답 데이터 전체:', data);
+            
+            if (data.data && data.data.length > 0) {
+                console.log('첫 번째 리뷰 데이터 상세:', JSON.stringify(data.data[0], null, 2));
+            }
 
-        // 데이터 구조 변환
-        if (data.success && data.data) {
-            // 서버 응답 데이터를 클라이언트에서 사용하는 형식으로 변환
-            const transformedData = {
+            console.log('서버 응답 데이터:', {
                 success: data.success,
                 message: data.message,
-                data: data.data.map((item: any) => ({
-                    review_id: item.review_id || 0,
-                    nickname: item.nickname || '익명',
-                    avg_score: item.avg_score || 0,
-                    nose_score: item.nose_score || 0,
-                    palate_score: item.palate_score || 0,
-                    finish_score: item.finish_score || 0,
-                    content: item.content || '',
-                    created_at: item.created_at || '',
-                    product: {
-                        product_id: item.product?.id || 0,
-                        product_name: item.product?.name || '알 수 없음',
-                        img_path: item.product?.imgPath || '',
-                        alcohol: item.product?.product_info?.alcohol || 0,
-                        capacity: item.product?.product_info?.capacity || 0,
-                        area: item.product?.product_info?.area || '알 수 없음',
-                        category: { 
-                            id: item.product?.category || 0, 
-                            name: getCategoryName(item.product?.category) 
+                totalCount: data.data?.length || 0
+            });
+
+            // 데이터 구조 변환
+            if (data.success && data.data) {
+                // 서버 응답 데이터를 클라이언트에서 사용하는 형식으로 변환
+                const transformedData = {
+                    success: data.success,
+                    message: data.message,
+                    data: data.data.map((item: any) => ({
+                        review_id: item.review_id || 0,
+                        nickname: item.nickname || '익명',
+                        avg_score: item.avg_score || 0,
+                        nose_score: item.nose_score || 0,
+                        palate_score: item.palate_score || 0,
+                        finish_score: item.finish_score || 0,
+                        content: item.content || '',
+                        created_at: item.created_at || '',
+                        product: {
+                            product_id: item.product?.id || 0,
+                            product_name: item.product?.name || '알 수 없음',
+                            img_path: item.product?.imgPath || '',
+                            alcohol: item.product?.product_info?.alcohol || 0,
+                            capacity: item.product?.product_info?.capacity || 0,
+                            area: item.product?.product_info?.area || '알 수 없음',
+                            category: { 
+                                id: item.product?.category || 0, 
+                                name: getCategoryName(item.product?.category) 
+                            }
+                        },
+                        aroma_profile: {
+                            labels: item.aroma_profile?.labels || [],
+                            data: item.aroma_profile?.scores || []
                         }
-                    },
-                    aroma_profile: {
-                        labels: item.aroma_profile?.labels || [],
-                        data: item.aroma_profile?.scores || []
-                    }
-                }))
-            };
-            
-            console.log('변환된 데이터 예시:', transformedData.data.length > 0 ? transformedData.data[0] : '데이터 없음');
-            return NextResponse.json(transformedData);
+                    }))
+                };
+                
+                console.log('변환된 데이터 예시:', transformedData.data.length > 0 ? transformedData.data[0] : '데이터 없음');
+                return NextResponse.json(transformedData);
+            }
+
+            return NextResponse.json(data);
+        } catch (abortError: any) {
+            clearTimeout(timeoutId);
+            if (abortError.name === 'AbortError') {
+                console.error('리뷰 목록 요청 타임아웃 (10초 초과)');
+                return NextResponse.json(
+                    { message: '서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.' },
+                    { status: 504 }
+                );
+            }
+            throw abortError; // 다른 에러는 외부 catch 블록으로 전달
         }
-
-        return NextResponse.json(data);
-
-    } catch (error) {
+    } catch (error: any) {
         console.error('리뷰 목록 조회 중 오류 발생:', error);
         return NextResponse.json(
-            { message: '리뷰 목록을 불러오는데 실패했습니다.' },
+            { message: '리뷰 목록을 불러오는데 실패했습니다.', error: error.message },
             { status: 500 }
         );
     }

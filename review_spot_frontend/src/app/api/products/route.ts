@@ -1,9 +1,6 @@
 "use server"
 
-
 import { NextRequest, NextResponse } from "next/server";
-
-
 
 export async function GET(request: NextRequest) {
     try {
@@ -26,26 +23,44 @@ export async function GET(request: NextRequest) {
 
         const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/?${queryParams.toString()}`;
 
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        // AbortController를 사용하여 타임아웃 설정
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch products. Status: ${response.status}`);
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId); // 요청이 완료되면 타임아웃 취소
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch products. Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            
+            return NextResponse.json(data);
+        } catch (abortError: any) {
+            clearTimeout(timeoutId);
+            if (abortError.name === 'AbortError') {
+                console.error('Request timed out after 10 seconds');
+                return NextResponse.json(
+                    { error: 'Request timed out. The server took too long to respond.' },
+                    { status: 504 }
+                );
+            }
+            throw abortError; // 다른 에러는 외부 catch 블록으로 전달
         }
-
-        const data = await response.json();
-        console.log(data);
-        
-        return NextResponse.json(data);
-
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error occurred while fetching products:', error);
         return NextResponse.json(
-            { error: 'Internal Server Error' },
+            { error: 'Internal Server Error', message: error.message },
             { status: 500 }
         );
     }
