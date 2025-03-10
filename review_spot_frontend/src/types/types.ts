@@ -56,13 +56,13 @@ export interface ReviewItem {
 
 // 리뷰 폼 데이터 타입
 export interface ReviewFormData {
-  productId: number;
-  nickname: string;
-  noseScore: number;
-  palateScore: number;
-  finishScore: number;
+  product_id?: number;
+  nose_score: number;
+  palate_score: number;
+  finish_score: number;
   content: string;
-  aromaProfile: AromaProfile;
+  aroma_labels: string[];
+  aroma_scores: { [key: string]: number };
 }
 
 // 리뷰 아이템 컴포넌트 프롭스

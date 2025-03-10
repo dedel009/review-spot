@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Pagination from "../common/pagenationComponent";
 import { Product } from "@/types/types";
-import { getProducts } from "@/app/api/products/products";
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -18,13 +17,21 @@ export default function ProductList() {
   const fetchProducts = async () => {
     try {
       // 빈 값이 있는 경우 파라미터에서 제외
-      const params: any = {};
-      if (query) params.query = query;
-      if (category) params.category_id = category;
-      params.sort = sort;
+      const queryParams = new URLSearchParams();
+      if (query) queryParams.append('query', query);
+      if (category !== "0") queryParams.append('category_id', category);
+      queryParams.append('sort', sort);
+      queryParams.append('display', itemsPerPage.toString());
+      queryParams.append('page_num', currentPage.toString());
 
-      const res = await getProducts(params);
-      setProducts(res);
+      const response = await fetch(`/api/products?${queryParams.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+
+      const data = await response.json();
+      setProducts(data.data);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     }
@@ -85,13 +92,32 @@ export default function ProductList() {
             >
               <div className="h-full flex flex-row items-center border border-sky-500 rounded-lg overflow-hidden ease duration-300 hover:-translate-y-2 w-full">
                 <div className="relative w-48 h-48 flex-shrink-0">
-                  <Image
-                    src={product.img_path || ""}
-                    alt={product.product_name}
-                    layout="fill"
-                    objectFit="cover" // Adjust objectFit as needed
-                    className="object-cover"
-                  />
+                  {product.img_path ? (
+                    <Image
+                      src={product.img_path}
+                      alt={product.product_name}
+                      layout="fill"
+                      objectFit="cover"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <svg
+                        className="w-24 h-24 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  )}
                 </div>
                 <div className="w-full h-full py-5 flex flex-col justify-between items-start">
                   <div className="flex">

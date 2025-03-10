@@ -1,13 +1,52 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Modal from "./modal";
+import SignUpComponent from "../sign/signUpComponent";
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isWhiskiesDropdownOpen, setIsWhiskiesDropdownOpen] = useState(false);
   const [isMobileWhiskiesDropdownOpen, setIsMobileWhiskiesDropdownOpen] =
     useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const checkLoginStatus = async () => {
+    try {
+      const response = await fetch('/api/auth/check', {
+        method: 'GET',
+        credentials: 'include', // 쿠키 포함
+      });
+
+      const data = await response.json();
+      setIsLoggedIn(data.isAuthenticated);
+    } catch (error) {
+      console.error('인증 상태 확인 중 오류 발생:', error);
+      setIsLoggedIn(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include', // 쿠키 포함
+      });
+
+      if (response.ok) {
+        setIsLoggedIn(false);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
+    }
+  };
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -82,6 +121,30 @@ export default function Nav() {
           <Link href="/#" className="text-black hover:text-gray-300">
             #
           </Link>
+          
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="ml-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="ml-4 px-4 py-2 bg-blue-200 text-white rounded hover:bg-blue-300 transition-colors"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/signUp"
+                className="ml-4 px-4 py-2 bg-blue-200 text-white rounded hover:bg-blue-300 transition-colors"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
         </div>
         <div className="md:hidden">
           <button
@@ -148,7 +211,36 @@ export default function Nav() {
         <Link href="/#" className="text-gray-700 hover:text-gray-700">
           #
         </Link>
+        
+        {isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            className="block py-2 text-red-500 hover:text-red-700"
+          >
+            로그아웃
+          </button>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="block py-2 text-gray-700 hover:text-gray-900"
+            >
+              로그인
+            </Link>
+            <Link
+              href="/signUp"
+              className="block py-2 text-gray-700 hover:text-gray-900"
+            >
+              회원가입
+            </Link>
+          </>
+        )}
       </div>
+
+      {/* 회원가입 모달 */}
+      <Modal isOpen={isSignUpModalOpen} onClose={() => setIsSignUpModalOpen(false)}>
+        <SignUpComponent />
+      </Modal>
     </nav>
   );
 }
